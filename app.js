@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-
+const db = require("./models");
 const helpers = require("./_helpers");
 const exphbs = require("express-handlebars");
 const port = process.env.PORT || 3000;
