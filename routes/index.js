@@ -41,9 +41,14 @@ module.exports = (app, passport) => {
   );
   app.get("/logout", userController.logout);
 
-  // adminController
-  // app.get("/admin", authenticatedAdmin, (req, res) =>
-  //   res.redirect("/admin/tweets")
-  // );
-  // app.get("/admin/tweets", authenticatedAdmin, adminController.getTweets);
+  // 後台
+  app.get("/admin", authenticatedAdmin, (req, res) =>
+    res.redirect("/admin/tweets")
+  );
+  app.get("/admin/tweets", authenticatedAdmin, adminController.getTweets);
+  app.delete(
+    "/admin/tweets/:id",
+    authenticatedAdmin,
+    adminController.deleteTweet
+  );
 };
