@@ -12,4 +12,5 @@ module.exports = app => {
   app.get('/admin', (req, res) => res.redirect('/admin/tweets'))
   app.get('/admin/tweets', adminController.getTweets)
   app.delete('/admin/tweets/:id', adminController.deleteTweet)
+  app.get('/admin/users', adminController.getUsers)
 };

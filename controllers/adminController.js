@@ -1,5 +1,6 @@
 const db = require('../models')
 const Tweet = db.Tweet
+const User = db.User
 
 const adminController = {
   getTweets: (req, res) => {
@@ -16,6 +17,19 @@ const adminController = {
             res.redirect('/admin/tweets')
           })
       })
+  },
+
+  getUsers: (req, res) => {
+    return User.findAll({
+      include: [
+        Tweet,
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' }
+      ]
+    }).then(users => {
+      console.log(users)
+      return res.render('admin/users', { users })
+    })
   }
 }
 
