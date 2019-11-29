@@ -1,13 +1,13 @@
 const express = require("express");
 const app = express();
-
+const db = require("./models");
 const helpers = require("./_helpers");
 const exphbs = require("express-handlebars");
 const port = process.env.PORT || 3000;
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const flash = require("connect-flash");
-// const passport = require('./config/passport')
+const passport = require("./config/passport");
 const methodOverride = require("method-override");
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,8 +21,8 @@ app.use(
 );
 app.use(flash());
 
-// app.use(passport.initialize())
-// app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(methodOverride("_method"));
 
@@ -43,4 +43,4 @@ app.use((req, res, next) => {
 
 app.listen(port, () => console.log(`Express app listening on port ${port}!`));
 
-require("./routes")(app);
+require("./routes")(app, passport);
