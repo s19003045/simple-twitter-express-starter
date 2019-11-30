@@ -61,7 +61,7 @@ module.exports = {
       ), {});
 
     // 建立 300 個 replies 種子
-    return queryInterface.bulkInsert('Replies',
+    queryInterface.bulkInsert('Replies',
       Array.from({ length: 300 }).map(d =>
         ({
           comment: faker.lorem.text().substring(0, 120), //設定 comment 字數少於 120
@@ -71,11 +71,76 @@ module.exports = {
           updatedAt: new Date()
         })
       ), {});
+
+    // 建立 300 個 likes 種子
+    queryInterface.bulkInsert('Likes',
+      Array.from({ length: 300 }).map(d =>
+        ({
+          UserId: Math.floor(Math.random() * 8) + 1,
+          TweetId: Math.floor(Math.random() * 80) + 1,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+      ), {});
+
+    // 建立 300 個 followships 種子
+    return queryInterface.bulkInsert('Followships', [
+      {
+        followingId: 1,
+        followerId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 1,
+        followerId: 5,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 2,
+        followerId: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 2,
+        followerId: 7,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 5,
+        followerId: 4,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 5,
+        followerId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 7,
+        followerId: 1,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        followingId: 7,
+        followerId: 3,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    ]);
   },
 
   down: (queryInterface, Sequelize) => {
     queryInterface.bulkDelete('Users', null, {})
     queryInterface.bulkDelete('Tweets', null, {})
-    return queryInterface.bulkDelete('Replies', null, {})
+    queryInterface.bulkDelete('Replies', null, {})
+    queryInterface.bulkDelete('Likes', null, {})
+    return queryInterface.bulkDelete('Followships', null, {})
   }
 };
