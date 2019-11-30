@@ -1,1 +1,66 @@
-<h3>this is page for /tweets</h3>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md-8 pr-5">
+      <div class="row">
+        <div class="col-md-12">
+          <form action="/tweets" method="POST">
+            <div class="form-group">
+              <textarea class="form-control" id="tweet-text" name="tweet-text" rows="3"
+                placeholder="What's on your mind?"></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Tweet</button>
+            </div>
+          </form>
+        </div>
+        <div class="col-md-12" id="tweets">
+          {{#each tweets}}
+          <div class="row mt-3 border p-3">
+            <div class="col-md-2">
+              <img class="img-fluid" src="{{this.User.avatar}}" alt="HEAD PIC">
+            </div>
+            <div class="col-md-10">
+              <h5>{{this.user.name}}</h5>
+              <p>{{this.description}}
+              </p>
+              <form action="/tweets/{{tweet.id}}/replies" method="POST" style="display: contents;">
+                <button type="submit" class="btn btn-outline-primary mr-1 align-self-center">Reply(
+                  {{this.Replies.length}})</button>
+              </form>
+              <form action="/tweets/{{tweet.id}}/likes" method="POST" style="display: contents;">
+                <button type="submit"
+                  class="btn btn-outline-danger mr-1 align-self-center">Like({{this.Likes.length}})</button>
+              </form>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Popular</h2>
+        </div>
+        <div class="col-md-12" id="top-ten-users">
+          {{#each top_ten_users}}
+          <div class="row mt-3 border p-3">
+            <div class="col-md-4">
+              <img class="img-fluid" src="{{this.avatar}}" alt="HEAD PIC">
+            </div>
+            <div class="col-md-8">
+              <h4>{{this.name}}</h4>
+              <p>{{this.introduction}}</p>
+              <form action="/followships" method="POST" style="display: contents;">
+                <div class="d-flex justify-content-end">
+                  <button type="submit" class="btn btn-outline-primary mr-1 align-self-center">Follow</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          {{/each}}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
