@@ -134,7 +134,7 @@ const userController = {
           isFollowed: req.user.Followings.map(d => d.id).includes(r.id)
         }))
 
-        return res.json(data)
+        return res.render('userFollowings', { data })
       })
   },
   getUserFollowers: (req, res) => {
