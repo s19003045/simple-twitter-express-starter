@@ -94,7 +94,7 @@ const userController = {
           likeCount: tweet.Likes.length
         }))
 
-        return res.json(data)
+        return res.render('userTweets', { data })
       })
   },
   getUserFollowings: (req, res) => {
