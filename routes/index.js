@@ -59,10 +59,7 @@ module.exports = (app, passport) => {
     authenticatedAdmin,
     adminController.deleteTweet
   );
-<<<<<<< HEAD
-=======
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers);
->>>>>>> e80334b143a49327c8e38166c1fed8fa16eb78f9
 
 };
 
