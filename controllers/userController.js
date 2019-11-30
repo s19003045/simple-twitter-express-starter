@@ -171,7 +171,12 @@ const userController = {
           isFollowed: req.user.Followers.map(d => d.id).includes(user.id)
         }
 
-        return res.json(data)
+        data.Followers = data.Followers.map(r => ({
+          ...r.dataValues,
+          // 該 user 是否被使用者追蹤者
+          isFollowed: req.user.Followings.map(d => d.id).includes(r.id)
+        }))
+        return res.render('userFollowers', { data })
       })
   },
   getUserLikes: (req, res) => {
