@@ -25,6 +25,7 @@ module.exports = (app, passport) => {
 
   //在 /tweets 底下則交給 restController.getTweets 來處理
   app.get("/tweets", authenticated, tweetController.getTweets);
+  app.post("/tweets", authenticated, tweetController.postTweets);
 
   // signup
   app.get("/signup", userController.signUpPage);

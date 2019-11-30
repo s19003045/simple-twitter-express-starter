@@ -28,6 +28,19 @@ const tweetController = {
         });
       });
     });
+  },
+  postTweets: (req, res) => {
+    if (!req.body.tweettext) {
+      req.flash("error_messages", "there's no text input");
+      res.redirect("back");
+    } else {
+      return Tweet.create({
+        description: req.body.tweettext,
+        UserId: req.user.id
+      }).then(user => {
+        res.redirect("/tweets");
+      });
+    }
   }
 };
 
