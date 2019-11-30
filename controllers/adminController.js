@@ -6,7 +6,12 @@ const Like = db.Like
 const adminController = {
   getTweets: (req, res) => {
     return Tweet.findAll().then(tweets => {
-      return res.render('admin/tweets', { tweets })
+      const data = tweets.map(r => {
+        r.description = r.description.substring(0, 50)
+        return r
+      })
+
+      return res.render('admin/tweets', { tweets: data })
     })
   },
 
