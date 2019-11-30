@@ -1,0 +1,31 @@
+<h1>Twitter 後台</h1>
+
+<a href='/admin/tweets'>Tweets</a> |
+<a href='/admin/users'>Users</a>
+<br />
+<br />
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Name</th>
+      <th scope="col">Tweets</th>
+      <th scope="col">Following</th>
+      <th scope="col">Follower</th>
+      <th scope="col">Like</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each users}}
+    <tr>
+      <th scope="row">{{this.id}}</th>
+      <td>{{this.name}}</td>
+      <td></td>
+      <td>{{this.Followings.length}}</td>
+      <td>{{this.Followers.length}}</td>
+      <td></td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
