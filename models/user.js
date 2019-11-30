@@ -26,6 +26,14 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'FollowingId',
       as: 'Followers'
     })
+
+    // 這個使用者喜歡的推文
+    User.belongsToMany(models.Tweet, {
+      through: models.Like,
+      foreignKey: 'UserId',
+      as: 'LikeTweets'
+    })
+
   };
   return User;
 };

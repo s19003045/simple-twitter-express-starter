@@ -13,7 +13,10 @@ const methodOverride = require("method-override");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.engine("handlebars", exphbs({ defaultLayout: "main" }));
+app.engine("handlebars", exphbs({
+  defaultLayout: "main",
+  helpers: require('./config/handlebars-helpers')
+}));
 app.set("view engine", "handlebars");
 
 app.use(
