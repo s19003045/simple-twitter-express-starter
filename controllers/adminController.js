@@ -1,6 +1,7 @@
 const db = require('../models')
 const Tweet = db.Tweet
 const User = db.User
+const Like = db.Like
 
 const adminController = {
   getTweets: (req, res) => {
@@ -24,10 +25,9 @@ const adminController = {
       include: [
         Tweet,
         { model: User, as: 'Followers' },
-        { model: User, as: 'Followings' }
+        { model: User, as: 'Followings' },
       ]
     }).then(users => {
-      console.log(users)
       return res.render('admin/users', { users })
     })
   }

@@ -33,6 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'UserId',
       as: 'LikeTweets'
     })
+
   };
   return User;
 };
