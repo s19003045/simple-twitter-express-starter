@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt-nodejs");
 const db = require("../models");
 const User = db.User;
+const Tweet = db.Tweet
+const Like = db.Like
+const Reply = db.Reply
 
 const userController = {
   signUpPage: (req, res) => {
@@ -49,7 +52,180 @@ const userController = {
     req.flash("success_messages", "登出成功！");
     req.logout();
     res.redirect("/signin");
-  }
+  },
+
+  getUserTweets: (req, res) => {
+    User.findByPk(req.params.id, {
+      include: [
+        {
+          model: Tweet,
+          order: [['createdAt', 'DESC']],
+          limit: 30, //搜尋 30 筆 
+          include: [Reply, Like]
+        },
+        {
+          model: User,
+          as: 'Followers',
+          attributes: ['id']
+        },
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        },
+        {
+          model: Like,
+          attributes: ['id']
+        }
+      ]
+    })
+      .then(user => {
+
+        const data = {
+          ...user.dataValues,
+          tweetCount: user.Tweets.length,
+          followerCount: user.Followers.length,
+          followingCount: user.Followings.length,
+          likeCount: user.Likes.length
+        }
+        data.Tweets = data.Tweets.map(tweet => ({
+          ...tweet.dataValues,
+          replyCount: tweet.Replies.length,
+          likeCount: tweet.Likes.length
+        }))
+
+        return res.json(data)
+      })
+  },
+  getUserFollowings: (req, res) => {
+    User.findByPk(req.params.id, {
+      include: [
+        {
+          model: Tweet,
+          attributes: ['id']
+        },
+        {
+          model: User,
+          as: 'Followers',
+          attributes: ['id']
+        },
+        {
+          model: User,
+          as: 'Followings'
+        },
+        {
+          model: Like,
+          attributes: ['id']
+        }
+      ]
+    })
+      .then(user => {
+
+        const data = {
+          ...user.dataValues,
+          tweetCount: user.Tweets.length,
+          followerCount: user.Followers.length,
+          followingCount: user.Followings.length,
+          likeCount: user.Likes.length,
+        }
+        data.Followings = data.Followings.map(r => ({
+          ...r.dataValues,
+          // 該 user 是否被使用者追蹤者
+          isFollowed: req.user.Followings.map(d => d.id).includes(r.id)
+        }))
+
+        return res.json(data)
+      })
+  },
+  getUserFollowers: (req, res) => {
+    User.findByPk(req.params.id, {
+      include: [
+        {
+          model: Tweet,
+          attributes: ['id']
+        },
+        {
+          model: User,
+          as: 'Followers'
+        },
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id'],
+        },
+        {
+          model: Like,
+          attributes: ['id']
+        }
+      ]
+    })
+      .then(user => {
+
+        const data = {
+          ...user.dataValues,
+          tweetCount: user.Tweets.length,
+          followerCount: user.Followers.length,
+          followingCount: user.Followings.length,
+          likeCount: user.Likes.length,
+          // 該 user 是否被使用者追蹤者
+          isFollowed: req.user.Followers.map(d => d.id).includes(user.id)
+        }
+
+        return res.json(data)
+      })
+  },
+  getUserLikes: (req, res) => {
+    User.findByPk(req.params.id, {
+      include: [
+        {
+          model: Tweet,
+          attributes: ['id']
+        },
+        {
+          model: User,
+          as: 'Followers',
+          attributes: ['id']
+        },
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        },
+        {
+          model: Like,
+          order: [['createdAt', 'DESC']],
+          limit: 20, //搜尋 20 筆
+          include: [
+            {
+              model: Tweet,
+              include: [
+                {
+                  model: Like,
+                  attributes: ['id']
+                },
+                {
+                  model: Reply,
+                  attributes: ['id']
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    })
+      .then(user => {
+
+        const data = {
+          ...user.dataValues,
+          tweetCount: user.Tweets.length,
+          followerCount: user.Followers.length,
+          followingCount: user.Followings.length,
+          likeCount: user.Likes.length
+        }
+
+        return res.json(data)
+      })
+  },
 };
 
 module.exports = userController;
