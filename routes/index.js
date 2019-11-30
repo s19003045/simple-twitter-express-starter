@@ -42,12 +42,11 @@ module.exports = (app, passport) => {
   );
   app.get("/logout", userController.logout);
 
-
   // 查看使用者的個人推播頁面、followings、followers、likes
-  app.get('/users/:id/tweets', userController.getUserTweets)
-  app.get('/users/:id/followings', userController.getUserFollowings)
-  app.get('/users/:id/followers', userController.getUserFollowers)
-  app.get('/users/:id/likes', userController.getUserLikes)
+  app.get("/users/:id/tweets", userController.getUserTweets);
+  app.get("/users/:id/followings", userController.getUserFollowings);
+  app.get("/users/:id/followers", userController.getUserFollowers);
+  app.get("/users/:id/likes", userController.getUserLikes);
 
   // 後台
   app.get("/admin", authenticatedAdmin, (req, res) =>
@@ -59,10 +58,5 @@ module.exports = (app, passport) => {
     authenticatedAdmin,
     adminController.deleteTweet
   );
-<<<<<<< HEAD
-=======
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers);
->>>>>>> e80334b143a49327c8e38166c1fed8fa16eb78f9
-
 };
-
