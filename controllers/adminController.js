@@ -33,6 +33,13 @@ const adminController = {
         { model: User, as: 'Followings' },
       ]
     }).then(users => {
+      users = users.map(user => ({
+        ...user.dataValues,
+        // 計算推文篇數
+        TweetCount: user.Tweets.length,
+      }))
+      // 依推文篇數排序清單
+      users = users.sort((a, b) => b.TweetCount - a.TweetCount)
       return res.render('admin/users', { users })
     })
   }
