@@ -47,7 +47,7 @@
           <form action="/followships/{{this.id}}?_method=DELETE" method="POST"><button type="submit"
               class="btn btn-danger mb-2 mr-2">Following</button></form>
           {{else}}
-          <form action="/followships" method="POST"><button type="submit"
+          <form action="/followships/{{this.id}}" method="POST"><button type="submit"
               class="btn btn-primary mb-2 mr-2">Follow</button>
           </form>
           {{/if}}

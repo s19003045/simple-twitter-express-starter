@@ -48,6 +48,10 @@ module.exports = (app, passport) => {
   app.get('/users/:id/followings', userController.getUserFollowings)
   app.get('/users/:id/followers', userController.getUserFollowers)
   app.get('/users/:id/likes', userController.getUserLikes)
+  app.post('/followships/:userId', userController.addFollowing)
+  app.delete('/followships/:userId',
+    userController.removeFollowing
+  )
 
   // 後台
   app.get("/admin", authenticatedAdmin, (req, res) =>

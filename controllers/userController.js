@@ -4,6 +4,7 @@ const User = db.User;
 const Tweet = db.Tweet
 const Like = db.Like
 const Reply = db.Reply
+const Followship = db.Followship
 
 const userController = {
   signUpPage: (req, res) => {
@@ -229,6 +230,31 @@ const userController = {
         }
 
         return res.json(data)
+      })
+  },
+
+  addFollowing: (req, res) => {
+    return Followship.create({
+      followingId: req.params.userId,
+      followerId: req.user.id,
+    })
+      .then((followship) => {
+        return res.redirect('back')
+      })
+  },
+
+  removeFollowing: (req, res) => {
+    return Followship.findOne({
+      where: {
+        followerId: req.user.id,
+        followingId: req.params.userId
+      }
+    })
+      .then((followship) => {
+        followship.destroy()
+          .then((followship) => {
+            return res.redirect('back')
+          })
       })
   },
 };
