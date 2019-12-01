@@ -132,7 +132,8 @@ const userController = {
         data.Followings = data.Followings.map(r => ({
           ...r.dataValues,
           // 該 user 是否被使用者追蹤者
-          isFollowed: req.user.Followings.map(d => d.id).includes(r.id)
+          isFollowed: req.user.Followings.map(d => d.id).includes(r.id),
+          isUserSelf: req.user.id === r.id
         }))
 
         return res.render('userFollowings', { data })
@@ -175,7 +176,8 @@ const userController = {
         data.Followers = data.Followers.map(r => ({
           ...r.dataValues,
           // 該 user 是否被使用者追蹤者
-          isFollowed: req.user.Followings.map(d => d.id).includes(r.id)
+          isFollowed: req.user.Followings.map(d => d.id).includes(r.id),
+          isUserSelf: req.user.id === r.id
         }))
         return res.render('userFollowers', { data })
       })
