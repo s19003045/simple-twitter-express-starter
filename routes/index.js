@@ -44,12 +44,12 @@ module.exports = (app, passport) => {
 
 
   // 查看使用者的個人推播頁面、followings、followers、likes
-  app.get('/users/:id/tweets', userController.getUserTweets)
-  app.get('/users/:id/followings', userController.getUserFollowings)
-  app.get('/users/:id/followers', userController.getUserFollowers)
-  app.get('/users/:id/likes', userController.getUserLikes)
-  app.post('/followships/:userId', userController.addFollowing)
-  app.delete('/followships/:userId',
+  app.get('/users/:id/tweets', authenticated, userController.getUserTweets)
+  app.get('/users/:id/followings', authenticated, userController.getUserFollowings)
+  app.get('/users/:id/followers', authenticated, userController.getUserFollowers)
+  app.get('/users/:id/likes', authenticated, userController.getUserLikes)
+  app.post('/followships/:userId', authenticated, userController.addFollowing)
+  app.delete('/followships/:userId', authenticated,
     userController.removeFollowing
   )
 
