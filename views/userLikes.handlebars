@@ -1,0 +1,55 @@
+<div class="row mt-4">
+  <div class="col-6">
+    <div id="content-formatting" class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title">{{data.name}}</h3>
+      </div>
+      <div class="card-body">
+        <img src="{{data.avatar}}" width="200" id="personal-info-avatar" alt="">
+        <h3 class="card-title mt-2">{{data.name}}</h3>
+        <p class="card-text">
+          <i class="fas fa-link mr-2"></i>
+          <a href="mailto:{{data.email}}">{{data.email}}</a>
+        </p>
+        <p class="card-text">{{data.introduction}}</p>
+        <hr>
+        <a href="#" class="mr-4">
+          <span class="text-dark">{{data.tweetCount}}</span>
+          <span class="ml-1 text-muted">Tweets</span>
+        </a>
+        <a href="/users/{{data.id}}/followings" class="mr-4">
+          <span class="text-dark">{{data.followingCount}}</span>
+          <span class="ml-1 text-muted">Followings</span>
+        </a>
+        <a href="/users/{{data.id}}/followers" class="mr-4">
+          <span class="text-dark">{{data.followerCount}}</span>
+          <span class="ml-1 text-muted">Followers</span>
+        </a>
+        <a href="/users/{{data.id}}/likes" class="mr-4">
+          <span class="text-dark">{{data.Likes.length}}</span>
+          <span class="ml-1 text-muted">Likes</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <h3 class="mb-3">Likes</h3>
+    {{#each data.Likes}}
+    <div id="content-formatting" class="card mb-4">
+      <div class="card-body">
+        <img src="{{this.Tweet.User.avatar}}" id="personal-tweets-avatar" alt="">
+        <small class="ml-2">{{this.Tweet.createdAt}}</small>
+        <h6 class="mt-2">{{this.Tweet.description}}</h6>
+        <hr>
+        <span class="mr-4">
+          <i class="far fa-comment-dots mr-2 fa-lg"></i>{{this.Tweet.Likes.length}}
+        </span>
+        <span>
+          <i class="far fa-heart mr-2 fa-lg"></i>
+          {{this.Tweet.Replies.length}}
+        </span>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>
