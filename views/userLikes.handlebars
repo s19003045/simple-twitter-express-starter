@@ -37,7 +37,9 @@
     {{#each data.Likes}}
     <div id="content-formatting" class="card mb-4">
       <div class="card-body">
-        <img src="{{this.Tweet.User.avatar}}" id="personal-tweets-avatar" alt="">
+        <a href="/users/{{this.Tweet.User.id}}/tweets">
+          <img src="{{this.Tweet.User.avatar}}" id="personal-tweets-avatar" alt="">
+        </a>
         <small class="ml-2">{{this.Tweet.createdAt}}</small>
         <h6 class="mt-2">{{this.Tweet.description}}</h6>
         <hr>

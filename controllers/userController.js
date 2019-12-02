@@ -5,8 +5,6 @@ const Tweet = db.Tweet
 const Like = db.Like
 const Reply = db.Reply
 const Followship = db.Followship
-const Sequelize = require('sequelize')
-// const sequelize = new Sequelize()
 
 const userController = {
   signUpPage: (req, res) => {
@@ -186,27 +184,20 @@ const userController = {
   },
   getUserLikes: (req, res) => {
     User.findByPk(req.params.id, {
-      attributes: {
-        include: [
-          [Sequelize.fn("COUNT", Sequelize.col("tweets.id")), "tweetCount"],
-          [Sequelize.fn("COUNT", Sequelize.col("followings.id")), "followingCount"],
-          [Sequelize.fn("COUNT", Sequelize.col("followers.id")), "followerCount"],
-        ]
-      },
       include: [
         {
           model: Tweet,
-          attributes: []
+          attributes: ['id']
         },
         {
           model: User,
           as: 'Followers',
-          attributes: []
+          attributes: ['id']
         },
         {
           model: User,
           as: 'Followings',
-          attributes: []
+          attributes: ['id']
         },
         {
           model: Like,
@@ -216,9 +207,7 @@ const userController = {
             {
               model: Tweet,
               include: [
-                {
-                  model: User
-                },
+                { model: User },
                 {
                   model: Like,
                   attributes: ['id']
@@ -237,6 +226,10 @@ const userController = {
 
         const data = {
           ...user.dataValues,
+          tweetCount: user.Tweets.length,
+          followerCount: user.Followers.length,
+          followingCount: user.Followings.length,
+          likeCount: user.Likes.length
         }
 
         return res.render('userLikes', { data })
