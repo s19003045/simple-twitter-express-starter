@@ -36,7 +36,9 @@
     {{#each data.Tweets}}
     <div id="content-formatting" class="card mb-4">
       <div class="card-body">
-        <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
+        <a href="#">
+          <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
+        </a>
         <small class="ml-2">{{this.createdAt}}</small>
         <h6 class="mt-2">{{this.description}}</h6>
         <hr>

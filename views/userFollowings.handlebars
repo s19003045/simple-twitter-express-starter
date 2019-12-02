@@ -37,7 +37,9 @@
     {{#each data.Followings}}
     <div id="content-formatting" class="card my-4">
       <div class="card-body">
-        <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
+        <a href="/users/{{...data.id}}/tweets">
+          <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
+        </a>
         <span class="text-dark ml-2 user-tweet-name">{{this.name}}</span>
         <small class="ml-2">{{this.createdAt}}</small>
         <h6 class="my-4">{{this.introduction}}</h6>
