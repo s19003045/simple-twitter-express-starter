@@ -6,7 +6,12 @@ const Like = db.Like
 const adminController = {
   getTweets: (req, res) => {
     return Tweet.findAll().then(tweets => {
-      return res.render('admin/tweets', { tweets })
+      const data = tweets.map(r => {
+        r.description = r.description.substring(0, 50)
+        return r
+      })
+
+      return res.render('admin/tweets', { tweets: data })
     })
   },
 
@@ -28,6 +33,13 @@ const adminController = {
         { model: User, as: 'Followings' },
       ]
     }).then(users => {
+      users = users.map(user => ({
+        ...user.dataValues,
+        // 計算推文篇數
+        TweetCount: user.Tweets.length,
+      }))
+      // 依推文篇數排序清單
+      users = users.sort((a, b) => b.TweetCount - a.TweetCount)
       return res.render('admin/users', { users })
     })
   }
