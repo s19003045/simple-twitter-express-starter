@@ -41,8 +41,6 @@ passport.serializeUser((user, cb) => {
 passport.deserializeUser((id, cb) => {
   User.findByPk(id, {
     include: [
-      { model: db.Reply },
-      { model: db.Tweet },
       { model: User, as: 'Followers' },
       { model: User, as: 'Followings' }
     ]
