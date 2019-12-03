@@ -4,6 +4,7 @@ const User = db.User;
 const Tweet = db.Tweet
 const Like = db.Like
 const Reply = db.Reply
+const Followship = db.Followship
 
 const userController = {
   signUpPage: (req, res) => {
@@ -94,7 +95,7 @@ const userController = {
           likeCount: tweet.Likes.length
         }))
 
-        return res.json(data)
+        return res.render('userTweets', { data })
       })
   },
   getUserFollowings: (req, res) => {
@@ -131,10 +132,11 @@ const userController = {
         data.Followings = data.Followings.map(r => ({
           ...r.dataValues,
           // 該 user 是否被使用者追蹤者
-          isFollowed: req.user.Followings.map(d => d.id).includes(r.id)
+          isFollowed: req.user.Followings.map(d => d.id).includes(r.id),
+          isUserSelf: req.user.id === r.id
         }))
 
-        return res.json(data)
+        return res.render('userFollowings', { data })
       })
   },
   getUserFollowers: (req, res) => {
@@ -171,7 +173,13 @@ const userController = {
           isFollowed: req.user.Followers.map(d => d.id).includes(user.id)
         }
 
-        return res.json(data)
+        data.Followers = data.Followers.map(r => ({
+          ...r.dataValues,
+          // 該 user 是否被使用者追蹤者
+          isFollowed: req.user.Followings.map(d => d.id).includes(r.id),
+          isUserSelf: req.user.id === r.id
+        }))
+        return res.render('userFollowers', { data })
       })
   },
   getUserLikes: (req, res) => {
@@ -224,6 +232,31 @@ const userController = {
         }
 
         return res.json(data)
+      })
+  },
+
+  addFollowing: (req, res) => {
+    return Followship.create({
+      followingId: req.params.userId,
+      followerId: req.user.id,
+    })
+      .then((followship) => {
+        return res.redirect('back')
+      })
+  },
+
+  removeFollowing: (req, res) => {
+    return Followship.findOne({
+      where: {
+        followerId: req.user.id,
+        followingId: req.params.userId
+      }
+    })
+      .then((followship) => {
+        followship.destroy()
+          .then((followship) => {
+            return res.redirect('back')
+          })
       })
   },
 };
