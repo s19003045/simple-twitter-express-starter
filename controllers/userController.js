@@ -95,7 +95,7 @@ const userController = {
           likeCount: tweet.Likes.length
         }))
 
-        return res.render('userTweets', { data })
+        return res.render('userTweets', { data, req })
       })
   },
   getUserFollowings: (req, res) => {
@@ -136,7 +136,7 @@ const userController = {
           isUserSelf: req.user.id === r.id
         }))
 
-        return res.render('userFollowings', { data })
+        return res.render('userFollowings', { data, req })
       })
   },
   getUserFollowers: (req, res) => {
@@ -179,7 +179,7 @@ const userController = {
           isFollowed: req.user.Followings.map(d => d.id).includes(r.id),
           isUserSelf: req.user.id === r.id
         }))
-        return res.render('userFollowers', { data })
+        return res.render('userFollowers', { data, req })
       })
   },
   getUserLikes: (req, res) => {
@@ -232,7 +232,7 @@ const userController = {
           likeCount: user.Likes.length
         }
 
-        return res.render('userLikes', { data })
+        return res.render('userLikes', { data, req })
       })
   },
 
@@ -260,6 +260,13 @@ const userController = {
           })
       })
   },
+
+  getUserProfile: (req, res) => {
+    return User.findByPk(req.params.id)
+      .then(user => {
+        return res.render('getUserProfile', { user, req })
+      })
+  }
 };
 
 module.exports = userController;

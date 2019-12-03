@@ -12,6 +12,9 @@
           <a href="mailto:{{data.email}}">{{data.email}}</a>
         </p>
         <p class="card-text">{{data.introduction}}</p>
+        {{#ifCond req.user.id data.id}}
+        <a href="/users/{{user.id}}/edit" class="mt-3 btn btn-info">Edit</a>
+        {{/ifCond}}
         <hr>
         <a href="#" class="mr-4">
           <span class="text-dark">{{data.tweetCount}}</span>
