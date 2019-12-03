@@ -40,6 +40,7 @@ const adminController = {
       }))
       // 依推文篇數排序清單
       users = users.sort((a, b) => b.TweetCount - a.TweetCount)
+      console.log(users[8].Tweets)
       return res.render('admin/users', { users })
     })
   }
