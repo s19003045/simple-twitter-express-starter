@@ -23,9 +23,14 @@ module.exports = (app, passport) => {
   //如果使用者訪問首頁，就導向 /tweets 的頁面
   app.get("/", authenticated, (req, res) => res.redirect("/tweets"));
 
-  //在 /tweets 底下則交給 restController.getTweets 來處理
+  //在 /tweets 底下則交給 tweetController.getTweets 來處理
   app.get("/tweets", authenticated, tweetController.getTweets);
   app.post("/tweets", authenticated, tweetController.postTweets);
+  app.get(
+    "/tweets/:tweet_id/replies",
+    authenticated,
+    tweetController.getReplies
+  );
 
   // signup
   app.get("/signup", userController.signUpPage);
@@ -44,12 +49,24 @@ module.exports = (app, passport) => {
   app.get("/logout", userController.logout);
 
   // 查看使用者的個人推播頁面、followings、followers、likes
-  app.get('/users/:id/tweets', authenticated, userController.getUserTweets)
-  app.get('/users/:id/followings', authenticated, userController.getUserFollowings)
-  app.get('/users/:id/followers', authenticated, userController.getUserFollowers)
-  app.get('/users/:id/likes', authenticated, userController.getUserLikes)
-  app.post('/followships/:userId', authenticated, userController.addFollowing)
-  app.delete('/followships/:userId', authenticated, userController.removeFollowing)
+  app.get("/users/:id/tweets", authenticated, userController.getUserTweets);
+  app.get(
+    "/users/:id/followings",
+    authenticated,
+    userController.getUserFollowings
+  );
+  app.get(
+    "/users/:id/followers",
+    authenticated,
+    userController.getUserFollowers
+  );
+  app.get("/users/:id/likes", authenticated, userController.getUserLikes);
+  app.post("/followships/:userId", authenticated, userController.addFollowing);
+  app.delete(
+    "/followships/:userId",
+    authenticated,
+    userController.removeFollowing
+  );
 
   // 後台
   app.get("/admin", authenticatedAdmin, (req, res) =>

@@ -1,0 +1,83 @@
+<div class="row mt-4">
+  <div class="col-3">
+    <div id="content-formatting" class="card mb-4">
+      <div class="card-body">
+        <img src="{{twitter.avatar}}" width="200" id="personal-info-avatar" alt="">
+        <h3 class="card-title mt-2">{{twitter.name}}</h3>
+        <p class="card-text">
+          <i class="fas fa-link mr-2"></i>
+          <a href="mailto:{{twitter.email}}">{{twitter.email}}</a>
+        </p>
+        <p class="card-text">{{twitter.introduction}}</p>
+        <hr>
+        <div class="d-flex flex-column ">
+          <a href="#" class="">
+            <span class="text-dark personal-info-summary">{{twitter.tweetCount}}</span>
+            <span class="ml-1 text-muted personal-info-summary">Tweets</span>
+          </a>
+          <a href="/users/{{twitter.id}}/followings" class="">
+            <span class="text-dark personal-info-summary">{{twitter.followingCount}}</span>
+            <span class="ml-1 text-muted personal-info-summary">Followings</span>
+          </a>
+          <a href="/users/{{twitter.id}}/followers" class="">
+            <span class="text-dark personal-info-summary">{{twitter.followerCount}}</span>
+            <span class="ml-1 text-muted personal-info-summary">Followers</span>
+          </a>
+          <a href="/users/{{twitter.id}}/likes" class="">
+            <span class="text-dark personal-info-summary">{{twitter.likeCount}}</span>
+            <span class="ml-1 text-muted personal-info-summary">Likes</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-9">
+    <h1>Tweets</h1>
+    <div id="content-formatting" class="card mb-4 ml-5">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-2">
+            <img src="{{twitter.avatar}}" id="personal-tweets-avatar" alt="">
+          </div>
+          <div class="col-10">
+            <small class="ml-2">{{twitter.name}}{{tweet.createdAt}}</small>
+            <h6 class="mt-2">{{tweet.description}}</h6>
+            <hr>
+            <span class="mr-4">
+              <i class="far fa-comment-dots mr-2 fa-lg"></i>{{tweet.Replies.length}}
+            </span>
+            <span>
+              <i class="far fa-heart mr-2 fa-lg"></i>
+              {{tweet.Likes.length}}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <h1>Replies</h1>
+    <form action="/tweets/:tweet_id/replies" method="POST" class="ml-5 mb-2">
+      <div class="form-group">
+        <textarea class="form-control" id="replyText" name="replyText" rows="3"
+          placeholder="Reply something"></textarea>
+      </div>
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary">Reply</button>
+      </div>
+    </form>
+    {{#each tweet.Replies}}
+    <div id="content-formatting" class="card mb-4 ml-5">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-2">
+            <img src="{{this.User.avatar}}" id="personal-tweets-avatar" alt="">
+          </div>
+          <div class="col-10">
+            <small class="ml-2">{{this.User.name}}{{this.createdAt}}</small>
+            <h6 class="mt-2">{{this.comment}}</h6>
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>
+</div>

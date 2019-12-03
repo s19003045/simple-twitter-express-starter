@@ -41,6 +41,37 @@ const tweetController = {
         res.redirect("/tweets");
       });
     }
+  },
+  getReplies: (req, res) => {
+    Tweet.findByPk(req.params.tweet_id, {
+      include: [
+        {
+          model: User,
+          attributes: ["name", "avatar", "introduction"],
+          include: [
+            { model: Tweet },
+            { model: User, as: "Followers" },
+            { model: User, as: "Followings" },
+            { model: Like }
+          ]
+        },
+        {
+          model: Reply,
+          include: [{ model: User, attributes: ["name", "avatar"] }]
+        },
+        { model: Like }
+      ]
+    }).then(tweet => {
+      // 整理資料
+      const twitter = {
+        ...tweet.User.dataValues,
+        tweetCount: tweet.User.Tweets.length,
+        followingCount: tweet.User.Followings.length,
+        followerCount: tweet.User.Followers.length,
+        likeCount: tweet.User.Likes.length
+      };
+      res.render("replies", { tweet, twitter });
+    });
   }
 };
 
