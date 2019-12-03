@@ -31,6 +31,11 @@ module.exports = (app, passport) => {
     authenticated,
     tweetController.getReplies
   );
+  app.post(
+    "/tweets/:tweet_id/replies",
+    authenticated,
+    tweetController.postReplies
+  );
 
   // signup
   app.get("/signup", userController.signUpPage);

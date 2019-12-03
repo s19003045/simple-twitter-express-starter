@@ -3,7 +3,6 @@ const Tweet = db.Tweet;
 const User = db.User;
 const Reply = db.Reply;
 const Like = db.Like;
-const Sequelize = require("sequelize");
 
 const tweetController = {
   getTweets: (req, res) => {
@@ -72,6 +71,20 @@ const tweetController = {
       };
       res.render("replies", { tweet, twitter });
     });
+  },
+  postReplies: (req, res) => {
+    if (!req.body.replyText) {
+      req.flash("error_messages", "there's no text input");
+      res.redirect("back");
+    } else {
+      return Reply.create({
+        comment: req.body.replyText,
+        TweetId: req.params.tweet_id,
+        UserId: req.user.id
+      }).then(user => {
+        res.redirect("back");
+      });
+    }
   }
 };
 

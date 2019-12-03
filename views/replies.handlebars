@@ -55,7 +55,7 @@
       </div>
     </div>
     <h1>Replies</h1>
-    <form action="/tweets/:tweet_id/replies" method="POST" class="ml-5 mb-2">
+    <form action="/tweets/{{tweet.id}}/replies" method="POST" class="ml-5 mb-2">
       <div class="form-group">
         <textarea class="form-control" id="replyText" name="replyText" rows="3"
           placeholder="Reply something"></textarea>
