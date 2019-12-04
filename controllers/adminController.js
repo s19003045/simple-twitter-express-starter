@@ -49,20 +49,26 @@ const adminController = {
       ]
     }).then(users => {
 
-
       users = users.map(user => ({
         ...user.dataValues,
         // 計算推文篇數
         TweetCount: user.Tweets.length,
+        //同一user的每篇推文like數丟進一個陣列
         LikeArray: user.Tweets.map(function (obj) {
           return obj.Likes.length
         }),
       }))
 
+      users = users.map(user => ({
+        ...user,
+        //計算該user獲得總like數
+        LikeCount: user.LikeArray.reduce(function (a, b) {
+          return a + b;
+        }, 0)
+      }))
+
       // 依推文篇數排序清單
       users = users.sort((a, b) => b.TweetCount - a.TweetCount)
-      console.log(users[8])
-
       return res.render('admin/users', { users })
     })
   }
