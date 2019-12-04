@@ -5,6 +5,9 @@ const Tweet = db.Tweet
 const Like = db.Like
 const Reply = db.Reply
 const Followship = db.Followship
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
+
 
 const userController = {
   signUpPage: (req, res) => {
@@ -266,6 +269,56 @@ const userController = {
       .then(user => {
         return res.render('getUserProfile', { user, req })
       })
+  },
+
+  // 編輯使用者個人資料
+  putUserProfile: (req, res) => {
+
+    if (!req.body.name) {
+      req.flash('error_messages', 'name should not be blank')
+      return res.redirect('back')
+    }
+    if (Number(req.params.id) !== Number(req.user.id)) {
+      req.flash('error_messages', 'permission denied')
+      return res.redirect('back')
+    }
+    const { file } = req
+
+    if (file) {
+      imgur.setClientID(IMGUR_CLIENT_ID)
+
+      imgur.upload(file.path, (err, img) => {
+
+        if (err) { console.log(err) } else {
+          return User.findByPk(req.params.id)
+            .then((user) => {
+
+              user.update({
+                name: req.body.name,
+                avatar: file ? img.data.link : user.avatar,
+                introduction: req.body.introduction || user.introduction
+              })
+                .then((user) => {
+                  req.flash('success_messages', 'profile was successfully update')
+                  return res.redirect('back')
+                })
+            })
+        }
+      })
+    } else {
+      return User.findByPk(req.params.id)
+        .then((user) => {
+          user.update({
+            name: req.body.name,
+            introduction: req.body.introduction || user.introduction
+          })
+            .then((user) => {
+              req.flash('success_messages', 'profile was successfully update')
+              return res.redirect('back')
+            })
+        })
+    }
+
   }
 };
 

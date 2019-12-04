@@ -1,6 +1,9 @@
 const tweetController = require("../controllers/tweetController");
 const userController = require("../controllers/userController");
 const adminController = require("../controllers/adminController");
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
+
 
 module.exports = (app, passport) => {
   // 驗證使用者權限
@@ -51,6 +54,7 @@ module.exports = (app, passport) => {
   app.post('/followships/:userId', authenticated, userController.addFollowing)
   app.delete('/followships/:userId', authenticated, userController.removeFollowing)
   app.get('/users/:id/edit', authenticated, userController.getUserProfile)
+  app.put('/users/:id/edit', authenticated, upload.single('image'), userController.putUserProfile)
 
 
   // 後台

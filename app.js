@@ -1,5 +1,11 @@
 const express = require("express");
 const app = express();
+
+// 判別開發環境
+if (process.env.NODE_ENV !== 'production') {      // 如果不是 production 模式，使用 dotenv 讀取 .env 檔案
+  require('dotenv').config()
+}
+
 const db = require("./models");
 const helpers = require("./_helpers");
 const exphbs = require("express-handlebars");
