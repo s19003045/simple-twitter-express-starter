@@ -2,17 +2,18 @@ const tweetController = require("../controllers/tweetController");
 const userController = require("../controllers/userController");
 const adminController = require("../controllers/adminController");
 const replyController = require("../controllers/replyController");
+const helpers = require("../_helpers");
 
 module.exports = (app, passport) => {
   // 驗證使用者權限
   const authenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (helpers.ensureAuthenticated(req)) {
       return next();
     }
     res.redirect("/signin");
   };
   const authenticatedAdmin = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (helpers.ensureAuthenticated(req)) {
       if (req.user.role === "admin") {
         return next();
       }
