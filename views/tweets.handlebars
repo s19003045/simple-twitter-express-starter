@@ -23,10 +23,9 @@
               <h5>{{this.user.name}}</h5>
               <p>{{this.description}}
               </p>
-              <form action="/tweets/{{tweet.id}}/replies" method="POST" style="display: contents;">
-                <button type="submit" class="btn btn-outline-primary mr-1 align-self-center">Reply(
-                  {{this.Replies.length}})</button>
-              </form>
+              <a href="/tweets/{{this.id}}/replies" role="button"
+                class="btn btn-outline-primary mr-1 align-self-center">Reply(
+                {{this.Replies.length}})</a>
               <form action="/tweets/{{tweet.id}}/likes" method="POST" style="display: contents;">
                 <button type="submit"
                   class="btn btn-outline-danger mr-1 align-self-center">Like({{this.Likes.length}})</button>
