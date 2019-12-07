@@ -2,8 +2,9 @@ const express = require("express");
 const app = express();
 
 // 判別開發環境
-if (process.env.NODE_ENV !== 'production') {      // 如果不是 production 模式，使用 dotenv 讀取 .env 檔案
-  require('dotenv').config()
+if (process.env.NODE_ENV !== "production") {
+  // 如果不是 production 模式，使用 dotenv 讀取 .env 檔案
+  require("dotenv").config();
 }
 
 const db = require("./models");
@@ -57,6 +58,4 @@ app.listen(port, () => console.log(`Express app listening on port ${port}!`));
 
 require("./routes")(app, passport);
 
-
 module.exports = app;
-

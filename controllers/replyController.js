@@ -11,12 +11,12 @@ const replyController = {
       include: [
         {
           model: User,
-          attributes: ["name", "avatar", "introduction"],
+          attributes: ["id", "name", "avatar", "introduction"],
           include: [
-            { model: Tweet },
-            { model: User, as: "Followers" },
-            { model: User, as: "Followings" },
-            { model: Like }
+            { model: Tweet, attributes: ["id"] },
+            { model: User, as: "Followers", attributes: ["id"] },
+            { model: User, as: "Followings", attributes: ["id"] },
+            { model: Like, attributes: ["id"] }
           ]
         },
         {
