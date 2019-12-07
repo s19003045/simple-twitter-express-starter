@@ -20,7 +20,7 @@ const tweetController = {
       let top_ten_users = users.slice(0, 10);
       Tweet.findAndCountAll({
         include: [User, Reply, Like],
-        order: [["updatedAt", "DESC"]]
+        order: [["createdAt", "DESC"]]
       }).then(result => {
         res.render("tweets", {
           tweets: result.rows,
