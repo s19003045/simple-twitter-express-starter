@@ -1,8 +1,14 @@
 const tweetController = require("../controllers/tweetController");
 const userController = require("../controllers/userController");
 const adminController = require("../controllers/adminController");
+
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
+
+// helpers 用來取代 req.user 成 helpers.getUser(req) & 取代 req.isAuthenticated() 成 helpers.ensureAuthenticated(req)
 const replyController = require("../controllers/replyController");
 const helpers = require("../_helpers");
+
 
 module.exports = (app, passport) => {
   // 驗證使用者權限
@@ -14,7 +20,7 @@ module.exports = (app, passport) => {
   };
   const authenticatedAdmin = (req, res, next) => {
     if (helpers.ensureAuthenticated(req)) {
-      if (req.user.role === "admin") {
+      if (helpers.getUser(req).role === "admin") {
         return next();
       }
       return res.redirect("/");
@@ -58,24 +64,18 @@ module.exports = (app, passport) => {
   app.get("/logout", userController.logout);
 
   // 查看使用者的個人推播頁面、followings、followers、likes
-  app.get("/users/:id/tweets", authenticated, userController.getUserTweets);
-  app.get(
-    "/users/:id/followings",
-    authenticated,
-    userController.getUserFollowings
-  );
-  app.get(
-    "/users/:id/followers",
-    authenticated,
-    userController.getUserFollowers
-  );
-  app.get("/users/:id/likes", authenticated, userController.getUserLikes);
-  app.post("/followships/:userId", authenticated, userController.addFollowing);
-  app.delete(
-    "/followships/:userId",
-    authenticated,
-    userController.removeFollowing
-  );
+
+  app.get('/users/:id/tweets', authenticated, userController.getUserTweets)
+  app.get('/users/:id/followings', authenticated, userController.getUserFollowings)
+  app.get('/users/:id/followers', authenticated, userController.getUserFollowers)
+  app.get('/users/:id/likes', authenticated, userController.getUserLikes)
+  app.post('/followships', authenticated, userController.addFollowing)
+  app.delete('/followships/:userId', authenticated, userController.removeFollowing)
+  app.get('/users/:id/edit', authenticated, userController.getUserProfile)
+  // 為了通過測試，將 put 改成 post 
+  app.post('/users/:id/edit', authenticated, upload.single('image'), userController.putUserProfile)
+
+
 
   // 後台
   app.get("/admin", authenticatedAdmin, (req, res) =>
