@@ -3,6 +3,7 @@ const Tweet = db.Tweet;
 const User = db.User;
 const Reply = db.Reply;
 const Like = db.Like;
+const helpers = require("../_helpers");
 
 const replyController = {
   getReplies: (req, res) => {
@@ -44,7 +45,7 @@ const replyController = {
       return Reply.create({
         comment: req.body.comment,
         TweetId: req.params.tweet_id,
-        UserId: req.user.id
+        UserId: helpers.getUser(req).id
       }).then(reply => {
         res.redirect("back");
       });
