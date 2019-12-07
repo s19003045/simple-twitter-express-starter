@@ -34,7 +34,24 @@ const replyController = {
         followerCount: tweet.User.Followers.length,
         likeCount: tweet.User.Likes.length
       };
-      res.render("replies", { tweet, twitter });
+      // 取得登入者的 followings，做為判斷 top_10_users 是否為登入者的 followings
+      User.findByPk(parseInt(helpers.getUser(req).id), {
+        include: [
+          Like,
+          {
+            model: User,
+            as: 'Followings',
+            attributes: ['id']
+          }
+        ]
+      })
+        .then(logginedUser => {
+          tweet.isLiked = logginedUser.Likes.map(d => d.TweetId).includes(tweet.id)
+          res.render("replies", { tweet, twitter });
+        })
+
+
+
     });
   },
   postReplies: (req, res) => {
