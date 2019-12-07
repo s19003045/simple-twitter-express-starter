@@ -78,69 +78,70 @@ const tweetController = {
 
           });
       });
-    },
+    })
+  },
 
-      postTweets: (req, res) => {
-        if (!req.body.description) {
-          req.flash("error_messages", "there's no text input");
-          res.redirect("back");
-        } else if (req.body.description.length > 140) {
-          req.flash(
-            "error_messages",
-            "tweet description only can contain max 140 characters."
-          );
-          res.redirect("back");
+  postTweets: (req, res) => {
+    if (!req.body.description) {
+      req.flash("error_messages", "there's no text input");
+      res.redirect("back");
+    } else if (req.body.description.length > 140) {
+      req.flash(
+        "error_messages",
+        "tweet description only can contain max 140 characters."
+      );
+      res.redirect("back");
+    } else {
+      return Tweet.create({
+        description: req.body.description,
+        UserId: helpers.getUser(req).id
+      }).then(tweet => {
+        res.redirect("/tweets");
+      });
+    }
+  },
+  // 對推播 like
+  addLike: (req, res) => {
+
+    // 判斷是否已 follow 該使用者
+    Like.findAll({
+      where: {
+        UserId: helpers.getUser(req).id
+      }
+    })
+      .then(likedTweets => {
+
+        const likedTweetsId = likedTweets.map(r => r.TweetId)
+        // 已 follow 該使用者，返回
+        if (likedTweetsId.includes(parseInt(req.params.id))) {
+          return res.redirect('back')
         } else {
-          return Tweet.create({
-            description: req.body.description,
-            UserId: helpers.getUser(req).id
-          }).then(tweet => {
-            res.redirect("/tweets");
-          });
-        }
-      },
-      // 對推播 like
-      addLike: (req, res) => {
-
-        // 判斷是否已 follow 該使用者
-        Like.findAll({
-          where: {
-            UserId: helpers.getUser(req).id
-          }
-        })
-          .then(likedTweets => {
-
-            const likedTweetsId = likedTweets.map(r => r.TweetId)
-            // 已 follow 該使用者，返回
-            if (likedTweetsId.includes(parseInt(req.params.id))) {
-              return res.redirect('back')
-            } else {
-              // 若未曾 like 該 tweet，則新增一筆
-              return Like.create({
-                UserId: helpers.getUser(req).id,
-                TweetId: parseInt(req.params.id)
-              })
-                .then((like) => {
-                  return res.redirect('back')
-                })
-            }
-          })
-      },
-      // 對推播 unlike
-      removeLike: (req, res) => {
-        return Like.findOne({
-          where: {
+          // 若未曾 like 該 tweet，則新增一筆
+          return Like.create({
             UserId: helpers.getUser(req).id,
-            TweetId: req.params.id
-          }
-        })
-          .then((like) => {
-            like.destroy()
-              .then((like) => {
-                return res.redirect('back')
-              })
+            TweetId: parseInt(req.params.id)
           })
-      },
+            .then((like) => {
+              return res.redirect('back')
+            })
+        }
+      })
+  },
+  // 對推播 unlike
+  removeLike: (req, res) => {
+    return Like.findOne({
+      where: {
+        UserId: helpers.getUser(req).id,
+        TweetId: req.params.id
+      }
+    })
+      .then((like) => {
+        like.destroy()
+          .then((like) => {
+            return res.redirect('back')
+          })
+      })
+  },
 };
 
-  module.exports = tweetController;
+module.exports = tweetController;
