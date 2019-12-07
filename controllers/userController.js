@@ -326,7 +326,7 @@ const userController = {
             followerId: helpers.getUser(req).id
           })
             .then((followship) => {
-              return res.redirect(`/users/${helpers.getUser(req).id}/followings`)
+              return res.redirect('back')
             })
         }
       })
