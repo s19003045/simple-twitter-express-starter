@@ -43,8 +43,9 @@
         <a href="#">
           <img src="{{this.User.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
-        <small class="ml-2">{{this.createdAt}}</small>
-        <h6 class="mt-2">{{this.description}}</h6>
+        <small class="ml-2"><a href="/users/{{this.Tweet.User.id}}/tweets">{{this.Tweet.User.name}}</a>,
+          {{moment this.Tweet.createdAt}}</small>
+        <h6 class="mt-2">{{this.Tweet.description}}</h6>
         <hr>
 
         <a href="/tweets/{{this.id}}/replies" role="button" class="btn btn-outline-primary mr-1 align-self-center">

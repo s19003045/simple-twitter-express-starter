@@ -58,9 +58,8 @@
             {{this.name}}
           </a>
         </span>
-        <small class="ml-2">{{this.createdAt}}</small>
+        <small class="ml-2">{{moment this.createdAt}}</small>
         <h6 class="my-4">{{this.introduction}}</h6>
-
         <div class="d-flex mt-2">
           {{#if this.isFollowed}}
           <form action="/followships/{{this.id}}?_method=DELETE" method="POST"><button type="submit"

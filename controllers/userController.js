@@ -1,13 +1,13 @@
 const bcrypt = require("bcrypt-nodejs");
 const db = require("../models");
 const User = db.User;
-const Tweet = db.Tweet
-const Like = db.Like
-const Reply = db.Reply
-const Followship = db.Followship
-const imgur = require('imgur-node-api')
-const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
-const helpers = require('../_helpers')
+const Tweet = db.Tweet;
+const Like = db.Like;
+const Reply = db.Reply;
+const Followship = db.Followship;
+const imgur = require("imgur-node-api");
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID;
+const helpers = require("../_helpers");
 
 const userController = {
   signUpPage: (req, res) => {
@@ -63,23 +63,22 @@ const userController = {
       include: [
         {
           model: Tweet,
-          order: [['createdAt', 'DESC']],
-          limit: 30, //搜尋 30 筆 
+          order: [["createdAt", "DESC"]],
           include: [Reply, Like]
         },
         {
           model: User,
-          as: 'Followers',
-          attributes: ['id']
+          as: "Followers",
+          attributes: ["id"]
         },
         {
           model: User,
-          as: 'Followings',
-          attributes: ['id']
+          as: "Followings",
+          attributes: ["id"]
         },
         {
           model: Like,
-          attributes: ['id']
+          attributes: ["id"]
         }
       ]
     })
@@ -122,20 +121,20 @@ const userController = {
       include: [
         {
           model: Tweet,
-          attributes: ['id']
+          attributes: ["id"]
         },
         {
           model: User,
-          as: 'Followers',
-          attributes: ['id']
+          as: "Followers",
+          attributes: ["id"]
         },
         {
           model: User,
-          as: 'Followings'
+          as: "Followings"
         },
         {
           model: Like,
-          attributes: ['id']
+          attributes: ["id"]
         }
       ]
     })
@@ -184,20 +183,20 @@ const userController = {
       include: [
         {
           model: Tweet,
-          attributes: ['id']
+          attributes: ["id"]
         },
         {
           model: User,
-          as: 'Followers'
+          as: "Followers"
         },
         {
           model: User,
-          as: 'Followings',
-          attributes: ['id'],
+          as: "Followings",
+          attributes: ["id"]
         },
         {
           model: Like,
-          attributes: ['id']
+          attributes: ["id"]
         }
       ]
     })
@@ -223,37 +222,36 @@ const userController = {
 
     //將 followers 依建立時間從最新到最舊排序
     data.Followers = data.Followers.sort((a, b) => {
-      return b.createdAt - a.createdAt
-    })
+      return b.createdAt - a.createdAt;
+    });
 
     data.Followers = data.Followers.map(r => ({
       ...r.dataValues,
       // 該 user 是否被使用者追蹤者
       isFollowed: logginedUser.Followings.map(d => d.id).includes(r.id),
       isUserSelf: helpers.getUser(req).id === r.id
-    }))
+    }));
 
-    const reqUserId = helpers.getUser(req).id
+    const reqUserId = helpers.getUser(req).id;
 
-    return res.render('userFollowers', { data, reqUserId })
-
+    return res.render("userFollowers", { data, reqUserId });
   },
   getUserLikes: async (req, res) => {
     const user = await User.findByPk(req.params.id, {
       include: [
         {
           model: Tweet,
-          attributes: ['id']
+          attributes: ["id"]
         },
         {
           model: User,
-          as: 'Followers',
-          attributes: ['id']
+          as: "Followers",
+          attributes: ["id"]
         },
         {
           model: User,
-          as: 'Followings',
-          attributes: ['id']
+          as: "Followings",
+          attributes: ["id"]
         },
         {
           model: Like,
@@ -265,11 +263,11 @@ const userController = {
                 { model: User },
                 {
                   model: Like,
-                  attributes: ['id']
+                  attributes: ["id"]
                 },
                 {
                   model: Reply,
-                  attributes: ['id']
+                  attributes: ["id"]
                 }
               ]
             }
@@ -305,11 +303,10 @@ const userController = {
   },
 
   addFollowing: (req, res) => {
-
     if (parseInt(req.body.id) === helpers.getUser(req).id) {
-      req.flash('error_messages', 'permission denied')
+      req.flash("error_messages", "permission denied");
       // 導向首頁(為了通過測試，status code 須為 200)
-      return res.render('tweets')
+      return res.render("tweets");
     }
     // 判斷是否已 follow 該使用者
     Followship.findAll({
@@ -318,21 +315,17 @@ const userController = {
       }
     })
       .then(followings => {
-
         // 已 follow 該使用者，返回
         const followingsId = followings.map(r => r.followingId)
         if (followingsId.includes(parseInt(req.body.id))) {
-
           return res.redirect('back')
         } else {
-
           // 未 follow 該使用者，新增 followship
           return Followship.create({
             followingId: parseInt(req.body.id),
             followerId: helpers.getUser(req).id
           })
             .then((followship) => {
-              return res.redirect('back')
               return res.redirect(`/users/${helpers.getUser(req).id}/followings`)
             })
         }
@@ -345,18 +338,16 @@ const userController = {
         followerId: helpers.getUser(req).id,
         followingId: req.params.userId
       }
-    })
-      .then((followship) => {
-        followship.destroy()
-          .then((followship) => {
-            return res.redirect('back')
-          })
-      })
+    }).then(followship => {
+      followship.destroy().then(followship => {
+        return res.redirect("back");
+      });
+    });
   },
 
   getUserProfile: (req, res) => {
     if (parseInt(req.params.id) !== helpers.getUser(req).id) {
-      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
+      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`);
     }
     return User.findByPk(req.params.id)
       .then(user => {
@@ -366,57 +357,55 @@ const userController = {
 
   // 編輯使用者個人資料
   putUserProfile: (req, res) => {
-
     if (parseInt(req.params.id) !== parseInt(helpers.getUser(req).id)) {
-      req.flash('error_messages', 'permission denied')
-      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
+      req.flash("error_messages", "permission denied");
+      return res.redirect(`/users/${helpers.getUser(req).id}/tweets`);
     }
 
     if (!req.body.name) {
-      req.flash('error_messages', 'name should not be blank')
-      return res.redirect('back')
+      req.flash("error_messages", "name should not be blank");
+      return res.redirect("back");
     }
 
-    const { file } = req
+    const { file } = req;
 
     if (file) {
-      imgur.setClientID(IMGUR_CLIENT_ID)
+      imgur.setClientID(IMGUR_CLIENT_ID);
 
       imgur.upload(file.path, (err, img) => {
-
-        if (err) { console.log(err) } else {
-          return User.findByPk(req.params.id)
-            .then((user) => {
-
-              user.update({
+        if (err) {
+          console.log(err);
+        } else {
+          return User.findByPk(req.params.id).then(user => {
+            user
+              .update({
                 name: req.body.name,
                 avatar: file ? img.data.link : user.avatar,
                 introduction: req.body.introduction || user.introduction
               })
-                .then((user) => {
-                  req.flash('success_messages', 'profile was successfully update')
-                  return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
-                })
-            })
+              .then(user => {
+                req.flash(
+                  "success_messages",
+                  "profile was successfully update"
+                );
+                return res.redirect(`/users/${helpers.getUser(req).id}/tweets`);
+              });
+          });
         }
-      })
+      });
     } else {
-
-      return User.findByPk(req.params.id)
-        .then((user) => {
-
-          user.update({
+      return User.findByPk(req.params.id).then(user => {
+        user
+          .update({
             name: req.body.name,
             introduction: req.body.introduction || user.introduction
           })
-            .then((user) => {
-
-              req.flash('success_messages', 'profile was successfully update')
-              return res.redirect(`/users/${helpers.getUser(req).id}/tweets`)
-            })
-        })
+          .then(user => {
+            req.flash("success_messages", "profile was successfully update");
+            return res.redirect(`/users/${helpers.getUser(req).id}/tweets`);
+          });
+      });
     }
-
   }
 };
 

@@ -40,8 +40,9 @@
             <img src="{{twitter.avatar}}" id="personal-tweets-avatar" alt="">
           </div>
           <div class="col-10">
-            <small class="ml-2">{{twitter.name}}{{tweet.createdAt}}</small>
-            <h6 class="mt-2">{{tweet.description}}</h6>
+            <h5 class="ml-2"><a href="/users/{{twitter.id}}/tweets">{{twitter.name}}</a>, {{moment tweet.createdAt}}
+            </h5>
+            <p class="mt-2 ml-2">{{tweet.description}}</p>
             <hr>
             <span class="mr-4">
               <i class="far fa-comment-dots mr-2 fa-lg"></i>{{tweet.Replies.length}}
@@ -71,8 +72,9 @@
             <img src="{{this.User.avatar}}" id="personal-tweets-avatar" alt="">
           </div>
           <div class="col-10">
-            <small class="ml-2">{{this.User.name}}{{this.createdAt}}</small>
-            <h6 class="mt-2">{{this.comment}}</h6>
+            <h5 class="ml-2"><a href="/users/{{this.UserId}}/tweets">{{this.User.name}}</a>, {{moment this.createdAt}}
+            </h5>
+            <p class="mt-2 ml-2">{{this.comment}}</p>
           </div>
         </div>
       </div>
