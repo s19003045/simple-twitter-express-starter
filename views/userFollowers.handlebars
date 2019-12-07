@@ -44,7 +44,7 @@
           <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
         <span class="text-dark ml-2 user-tweet-name">{{this.name}}</span>
-        <small class="ml-2">{{this.createdAt}}</small>
+        <small class="ml-2">{{moment this.createdAt}}</small>
         <h6 class="my-4">{{this.introduction}}</h6>
 
         <div class="d-flex mt-2">
