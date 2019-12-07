@@ -1,11 +1,13 @@
 const tweetController = require("../controllers/tweetController");
 const userController = require("../controllers/userController");
 const adminController = require("../controllers/adminController");
-const replyController = require("../controllers/replyController");
-// helpers 用來取代 req.user 成 helpers.getUser(req) & 取代 req.isAuthenticated() 成 helpers.ensureAuthenticated(req)
-const helpers = require('../_helpers')
+
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
+
+// helpers 用來取代 req.user 成 helpers.getUser(req) & 取代 req.isAuthenticated() 成 helpers.ensureAuthenticated(req)
+const replyController = require("../controllers/replyController");
+const helpers = require("../_helpers");
 
 
 module.exports = (app, passport) => {
