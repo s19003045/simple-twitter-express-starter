@@ -26,10 +26,29 @@
               <a href="/tweets/{{this.id}}/replies" role="button"
                 class="btn btn-outline-primary mr-1 align-self-center">Reply(
                 {{this.Replies.length}})</a>
-              <form action="/tweets/{{tweet.id}}/likes" method="POST" style="display: contents;">
-                <button type="submit"
-                  class="btn btn-outline-danger mr-1 align-self-center">Like({{this.Likes.length}})</button>
+              {{!-- 該 tweet 已被登入者 like --}}
+              {{#if this.isLiked}}
+              <form action="/tweets/{{this.id}}/unlike" method="POST" style="display: contents;">
+                <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+
+                  <span style="font-size: 1em; ">
+                    <i class="fas fa-heart mr-2 fa-lg "></i>
+                    {{this.Likes.length}}
+                  </span>
+                </button>
               </form>
+              {{else}}
+              {{!-- 該 tweet 未被登入者 like --}}
+              <form action="/tweets/{{this.id}}/like" method="POST" style="display: contents;">
+                <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+                  <span style="font-size: 1em; ">
+                    <i class="far fa-heart mr-2 fa-lg "></i>
+                    {{this.Likes.length}}
+                  </span>
+                </button>
+              </form>
+              {{/if}}
+
             </div>
           </div>
           {{/each}}

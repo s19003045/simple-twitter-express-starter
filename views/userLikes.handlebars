@@ -29,7 +29,7 @@
           <span class="ml-1 text-muted">Followers</span>
         </a>
         <a href="/users/{{data.id}}/likes" class="mr-4">
-          <span class="text-dark">{{data.Likes.length}}</span>
+          <span class="text-dark">{{data.likeCount}}</span>
           <span class="ml-1 text-muted">Likes</span>
         </a>
       </div>
@@ -37,22 +37,43 @@
   </div>
   <div class="col-6">
     <h3 class="mb-3">Likes</h3>
-    {{#each data.Likes}}
+    {{#each likedTweets}}
     <div id="content-formatting" class="card mb-4">
       <div class="card-body">
-        <a href="/users/{{this.Tweet.User.id}}/tweets">
-          <img src="{{this.Tweet.User.avatar}}" id="personal-tweets-avatar" alt="">
+        <a href="#">
+          <img src="{{this.User.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
-        <small class="ml-2">{{this.Tweet.createdAt}}</small>
-        <h6 class="mt-2">{{this.Tweet.description}}</h6>
+        <small class="ml-2">{{this.createdAt}}</small>
+        <h6 class="mt-2">{{this.description}}</h6>
         <hr>
-        <span class="mr-4">
-          <i class="far fa-comment-dots mr-2 fa-lg"></i>{{this.Tweet.Likes.length}}
-        </span>
-        <span>
-          <i class="far fa-heart mr-2 fa-lg"></i>
-          {{this.Tweet.Replies.length}}
-        </span>
+
+        <a href="/tweets/{{this.id}}/replies" role="button" class="btn btn-outline-primary mr-1 align-self-center">
+          <span class="">
+            <i class="far fa-comment-dots mr-2  fa-lg"></i>{{this.replyCount}}
+          </span>
+        </a>
+        {{!-- 該 tweet 已被登入者 like --}}
+        {{#if this.isLiked}}
+        <form action="/tweets/{{this.id}}/unlike" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+            <span style="font-size: 1em; ">
+              <i class="fas fa-heart mr-2 fa-lg "></i>
+              {{this.likeCount}}
+            </span>
+          </button>
+        </form>
+        {{else}}
+        {{!-- 該 tweet 未被登入者 like --}}
+        <form action="/tweets/{{this.id}}/like" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+            <span style="font-size: 1em; ">
+              <i class="far fa-heart mr-2 fa-lg "></i>
+              {{this.likeCount}}
+            </span>
+          </button>
+        </form>
+        {{/if}}
+
       </div>
     </div>
     {{/each}}
