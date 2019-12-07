@@ -44,6 +44,9 @@ module.exports = (app, passport) => {
     authenticated,
     replyController.postReplies
   );
+  app.post('/tweets/:id/like', authenticated, tweetController.addLike)
+  app.post('/tweets/:id/unlike', authenticated, tweetController.removeLike)
+
 
   // signup
   app.get("/signup", userController.signUpPage);
@@ -71,6 +74,7 @@ module.exports = (app, passport) => {
   app.get('/users/:id/edit', authenticated, userController.getUserProfile)
   // 為了通過測試，將 put 改成 post 
   app.post('/users/:id/edit', authenticated, upload.single('image'), userController.putUserProfile)
+
 
 
   // 後台
