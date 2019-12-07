@@ -3,6 +3,7 @@ const Tweet = db.Tweet;
 const User = db.User;
 const Reply = db.Reply;
 const Like = db.Like;
+const helpers = require("../_helpers");
 
 const tweetController = {
   getTweets: (req, res) => {
@@ -32,11 +33,17 @@ const tweetController = {
     if (!req.body.description) {
       req.flash("error_messages", "there's no text input");
       res.redirect("back");
+    } else if (req.body.description.length > 140) {
+      req.flash(
+        "error_messages",
+        "tweet description only can contain max 140 characters."
+      );
+      res.redirect("back");
     } else {
       return Tweet.create({
         description: req.body.description,
-        UserId: req.user.id
-      }).then(user => {
+        UserId: helpers.getUser(req).id
+      }).then(tweet => {
         res.redirect("/tweets");
       });
     }
