@@ -32,7 +32,6 @@ const tweetController = {
         order: [["updatedAt", "DESC"]]
       }).then(result => {
         // data for pagination
-        // console.log('result.count', result)
         let page = Number(req.query.page) || 1
         let pages = Math.ceil(result.count / pageLimit)
         let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
