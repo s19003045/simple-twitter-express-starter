@@ -29,12 +29,12 @@ const tweetController = {
     });
   },
   postTweets: (req, res) => {
-    if (!req.body.tweettext) {
+    if (!req.body.description) {
       req.flash("error_messages", "there's no text input");
       res.redirect("back");
     } else {
       return Tweet.create({
-        description: req.body.tweettext,
+        description: req.body.description,
         UserId: req.user.id
       }).then(user => {
         res.redirect("/tweets");
