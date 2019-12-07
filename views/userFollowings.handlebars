@@ -14,6 +14,16 @@
         <p class="card-text">{{data.introduction}}</p>
         {{#ifCond reqUserId data.id}}
         <a href="/users/{{reqUserId}}/edit" class="mt-3 btn btn-info">Edit</a>
+        {{else}}
+        {{#if data.isFollowed}}
+        <form action="/followships/{{data.id}}?_method=DELETE" method="POST"><button type="submit"
+            class="btn btn-danger mb-2 mr-2">Following</button></form>
+        {{else}}
+        <form action="/followships" method="POST">
+          <input type="number" name="id" value="{{data.id}}" class="d-none">
+          <button type="submit" class="btn btn-primary mb-2 mr-2">Follow</button>
+        </form>
+        {{/if}}
         {{/ifCond}}
         <hr>
         <a href="/users/{{data.id}}/tweets" class="mr-4">
@@ -40,10 +50,14 @@
     {{#each data.Followings}}
     <div id="content-formatting" class="card my-4">
       <div class="card-body">
-        <a href="/users/{{...data.id}}/tweets">
-          <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
+        <a href="/users/{{this.id}}/tweets">
+          <img src="{{this.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
-        <span class="text-dark ml-2 user-tweet-name">{{this.name}}</span>
+        <span class="text-dark ml-2 user-tweet-name">
+          <a href="/users/{{this.id}}/tweets">
+            {{this.name}}
+          </a>
+        </span>
         <small class="ml-2">{{this.createdAt}}</small>
         <h6 class="my-4">{{this.introduction}}</h6>
 

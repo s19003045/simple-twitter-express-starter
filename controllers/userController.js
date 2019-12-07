@@ -85,7 +85,14 @@ const userController = {
     })
 
     const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
-      include: [Like]
+      include: [
+        Like,
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        }
+      ]
     })
 
     const data = {
@@ -93,7 +100,8 @@ const userController = {
       tweetCount: user.Tweets.length,
       followerCount: user.Followers.length,
       followingCount: user.Followings.length,
-      likeCount: user.Likes.length
+      likeCount: user.Likes.length,
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(req.params.id))
     }
 
     data.Tweets = data.Tweets.map(r => ({
@@ -108,8 +116,9 @@ const userController = {
     return res.render('userTweets', { data, reqUserId })
 
   },
-  getUserFollowings: (req, res) => {
-    User.findByPk(req.params.id, {
+
+  getUserFollowings: async (req, res) => {
+    const user = await User.findByPk(req.params.id, {
       include: [
         {
           model: Tweet,
@@ -130,32 +139,43 @@ const userController = {
         }
       ]
     })
-      .then(user => {
 
-        const data = {
-          ...user.dataValues,
-          tweetCount: user.Tweets.length,
-          followerCount: user.Followers.length,
-          followingCount: user.Followings.length,
-          likeCount: user.Likes.length,
+    const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
+      include: [
+        Like,
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
         }
+      ]
+    })
 
-        //將 followings 依建立時間從最新到最舊排序
-        data.Followings = data.Followings.sort((a, b) => {
-          return b.createdAt - a.createdAt
-        })
+    const data = {
+      ...user.dataValues,
+      tweetCount: user.Tweets.length,
+      followerCount: user.Followers.length,
+      followingCount: user.Followings.length,
+      likeCount: user.Likes.length,
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(req.params.id))
+    }
 
-        data.Followings = data.Followings.map(r => ({
-          ...r.dataValues,
-          // 該 user 是否被使用者追蹤者
-          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(r.id),
-          isUserSelf: helpers.getUser(req).id === r.id
-        }))
+    //將 followings 依建立時間從最新到最舊排序
+    data.Followings = data.Followings.sort((a, b) => {
+      return b.createdAt - a.createdAt
+    })
 
-        const reqUserId = helpers.getUser(req).id
+    data.Followings = data.Followings.map(r => ({
+      ...r.dataValues,
+      // 該 user 是否被使用者追蹤者
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(r.id),
+      isUserSelf: helpers.getUser(req).id === r.id
+    }))
 
-        return res.render('userFollowings', { data, reqUserId })
-      })
+    const reqUserId = helpers.getUser(req).id
+
+    return res.render('userFollowings', { data, reqUserId })
+
   },
 
   getUserFollowers: async (req, res) => {
@@ -181,9 +201,15 @@ const userController = {
         }
       ]
     })
-
-    const loginUserFollowings = await Followship.findAll({
-      where: { followerId: helpers.getUser(req).id }
+    const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
+      include: [
+        Like,
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        }
+      ]
     })
 
     const data = {
@@ -192,6 +218,7 @@ const userController = {
       followerCount: user.Followers.length,
       followingCount: user.Followings.length,
       likeCount: user.Likes.length,
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(req.params.id))
     }
 
     //將 followers 依建立時間從最新到最舊排序
@@ -202,8 +229,7 @@ const userController = {
     data.Followers = data.Followers.map(r => ({
       ...r.dataValues,
       // 該 user 是否被使用者追蹤者
-      isFollowed: loginUserFollowings.map(d => d.followingId).includes(r.id),
-      // 該 user 是否為登入者自己
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(r.id),
       isUserSelf: helpers.getUser(req).id === r.id
     }))
 
@@ -306,7 +332,7 @@ const userController = {
             followerId: helpers.getUser(req).id
           })
             .then((followship) => {
-
+              return res.redirect('back')
               return res.redirect(`/users/${helpers.getUser(req).id}/followings`)
             })
         }
@@ -334,7 +360,7 @@ const userController = {
     }
     return User.findByPk(req.params.id)
       .then(user => {
-        return res.render('getUserProfile', { user, req })
+        return res.render('getUserProfile', { user })
       })
   },
 

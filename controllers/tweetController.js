@@ -23,15 +23,38 @@ const tweetController = {
         order: [["updatedAt", "DESC"]]
       }).then(result => {
 
-        result.rows = result.rows.map(r => ({
-          ...r.dataValues,
-          isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
-        }))
+        // 取得登入者的 followings，做為判斷 top_10_users 是否為登入者的 followings
+        User.findByPk(parseInt(helpers.getUser(req).id), {
+          include: [
+            Like,
+            {
+              model: User,
+              as: 'Followings',
+              attributes: ['id']
+            }
+          ]
+        })
+          .then(logginedUser => {
+            // 新增 isFollowed 屬性
+            top_ten_users = top_ten_users.map(r => ({
+              ...r.dataValues,
+              isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(r.id))
+            }))
 
-        res.render("tweets", {
-          tweets: result.rows,
-          top_ten_users
-        });
+            result.rows = result.rows.map(r => ({
+              ...r.dataValues,
+              isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
+            }))
+
+            // 登入者 id
+            const reqUserId = helpers.getUser(req).id
+
+            res.render("tweets", {
+              tweets: result.rows,
+              top_ten_users,
+              reqUserId
+            });
+          })
       });
     });
   },
