@@ -37,15 +37,15 @@ const replyController = {
     });
   },
   postReplies: (req, res) => {
-    if (!req.body.replyText) {
+    if (!req.body.comment) {
       req.flash("error_messages", "there's no text input");
       res.redirect("back");
     } else {
       return Reply.create({
-        comment: req.body.replyText,
+        comment: req.body.comment,
         TweetId: req.params.tweet_id,
         UserId: req.user.id
-      }).then(user => {
+      }).then(reply => {
         res.redirect("back");
       });
     }
