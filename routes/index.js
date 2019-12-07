@@ -1,11 +1,14 @@
 const tweetController = require("../controllers/tweetController");
 const userController = require("../controllers/userController");
 const adminController = require("../controllers/adminController");
+
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 
 // helpers 用來取代 req.user 成 helpers.getUser(req) & 取代 req.isAuthenticated() 成 helpers.ensureAuthenticated(req)
-const helpers = require('../_helpers')
+const replyController = require("../controllers/replyController");
+const helpers = require("../_helpers");
+
 
 module.exports = (app, passport) => {
   // 驗證使用者權限
@@ -28,18 +31,20 @@ module.exports = (app, passport) => {
   //如果使用者訪問首頁，就導向 /tweets 的頁面
   app.get("/", authenticated, (req, res) => res.redirect("/tweets"));
 
-  //在 /tweets 底下則交給 tweetController.getTweets 來處理
+  // tweetController
   app.get("/tweets", authenticated, tweetController.getTweets);
   app.post("/tweets", authenticated, tweetController.postTweets);
+
+  // replyController
   app.get(
     "/tweets/:tweet_id/replies",
     authenticated,
-    tweetController.getReplies
+    replyController.getReplies
   );
   app.post(
     "/tweets/:tweet_id/replies",
     authenticated,
-    tweetController.postReplies
+    replyController.postReplies
   );
 
   // signup
