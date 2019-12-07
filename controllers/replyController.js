@@ -3,6 +3,7 @@ const Tweet = db.Tweet;
 const User = db.User;
 const Reply = db.Reply;
 const Like = db.Like;
+const helpers = require("../_helpers");
 
 const replyController = {
   getReplies: (req, res) => {
@@ -37,15 +38,15 @@ const replyController = {
     });
   },
   postReplies: (req, res) => {
-    if (!req.body.replyText) {
+    if (!req.body.comment) {
       req.flash("error_messages", "there's no text input");
       res.redirect("back");
     } else {
       return Reply.create({
-        comment: req.body.replyText,
+        comment: req.body.comment,
         TweetId: req.params.tweet_id,
-        UserId: req.user.id
-      }).then(user => {
+        UserId: helpers.getUser(req).id
+      }).then(reply => {
         res.redirect("back");
       });
     }
