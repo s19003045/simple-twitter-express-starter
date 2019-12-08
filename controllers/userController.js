@@ -82,7 +82,7 @@ const userController = {
         }
       ]
     })
-
+    // return res.json(user)
     const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
       include: [
         Like,
@@ -241,7 +241,13 @@ const userController = {
       include: [
         {
           model: Tweet,
-          attributes: ["id"]
+          attributes: ["id"],
+          include: [
+            {
+              model: User,
+              attributes: ["id", "name", "avatar"]
+            }
+          ]
         },
         {
           model: User,

@@ -43,8 +43,8 @@
         <a href="#">
           <img src="{{this.User.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
-        <small class="ml-2"><a href="/users/{{this.Tweet.User.id}}/tweets">{{this.Tweet.User.name}}</a>,
-          {{moment this.Tweet.createdAt}}</small>
+        <span class="ml-2"><a href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a>,
+          {{moment this.Tweet.createdAt}}</span>
         <h6 class="mt-2">{{this.Tweet.description}}</h6>
         <hr>
 
