@@ -44,18 +44,46 @@
             </h5>
             <p class="mt-2 ml-2">{{tweet.description}}</p>
             <hr>
-            <span class="mr-4">
+            <a href="#reply-header" role="button" class="btn btn-outline-primary mr-1 align-self-center">Reply(
+              {{tweet.Replies.length}})</a>
+            {{!-- 該 tweet 已被登入者 like --}}
+            {{#if tweet.isLiked}}
+            <form action="/tweets/{{tweet.id}}/unlike" method="POST" style="display: contents;">
+              <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+
+                <span style="font-size: 1em; ">
+                  <i class="fas fa-heart mr-2 fa-lg "></i>
+                  {{tweet.Likes.length}}
+                </span>
+              </button>
+            </form>
+            {{else}}
+            {{!-- 該 tweet 未被登入者 like --}}
+            <form action="/tweets/{{tweet.id}}/like" method="POST" style="display: contents;">
+              <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+                <span style="font-size: 1em; ">
+                  <i class="far fa-heart mr-2 fa-lg "></i>
+                  {{tweet.Likes.length}}
+                </span>
+              </button>
+            </form>
+            {{/if}}
+
+
+
+
+            {{!-- <span class="mr-4">
               <i class="far fa-comment-dots mr-2 fa-lg"></i>{{tweet.Replies.length}}
             </span>
             <span>
               <i class="far fa-heart mr-2 fa-lg"></i>
               {{tweet.Likes.length}}
-            </span>
+            </span> --}}
           </div>
         </div>
       </div>
     </div>
-    <h1>Replies</h1>
+    <h1 id="reply-header">Replies</h1>
     <form action="/tweets/{{tweet.id}}/replies" method="POST" class="ml-5 mb-2">
       <div class="form-group">
         <textarea class="form-control" id="comment" name="comment" rows="3" placeholder="Reply something"></textarea>

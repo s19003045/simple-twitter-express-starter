@@ -46,6 +46,9 @@ module.exports = (app, passport) => {
     authenticated,
     replyController.postReplies
   );
+  app.post('/tweets/:id/like', authenticated, tweetController.addLike)
+  app.post('/tweets/:id/unlike', authenticated, tweetController.removeLike)
+
 
   // signup
   app.get("/signup", userController.signUpPage);
@@ -64,7 +67,6 @@ module.exports = (app, passport) => {
   app.get("/logout", userController.logout);
 
   // 查看使用者的個人推播頁面、followings、followers、likes
-
   app.get('/users/:id/tweets', authenticated, userController.getUserTweets)
   app.get('/users/:id/followings', authenticated, userController.getUserFollowings)
   app.get('/users/:id/followers', authenticated, userController.getUserFollowers)

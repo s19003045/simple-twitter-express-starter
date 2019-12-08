@@ -14,6 +14,16 @@
         <p class="card-text">{{data.introduction}}</p>
         {{#ifCond reqUserId data.id}}
         <a href="/users/{{reqUserId}}/edit" class="mt-3 btn btn-info">Edit</a>
+        {{else}}
+        {{#if data.isFollowed}}
+        <form action="/followships/{{data.id}}?_method=DELETE" method="POST"><button type="submit"
+            class="btn btn-danger mb-2 mr-2">Following</button></form>
+        {{else}}
+        <form action="/followships" method="POST">
+          <input type="number" name="id" value="{{data.id}}" class="d-none">
+          <button type="submit" class="btn btn-primary mb-2 mr-2">Follow</button>
+        </form>
+        {{/if}}
         {{/ifCond}}
         <hr>
         <a href="#" class="mr-4">
@@ -46,13 +56,34 @@
           {{moment this.createdAt}}</small>
         <h6 class="mt-2">{{this.description}}</h6>
         <hr>
-        <span class="mr-4">
-          <i class="far fa-comment-dots mr-2 fa-lg"></i>{{this.replyCount}}
-        </span>
-        <span>
-          <i class="far fa-heart mr-2 fa-lg"></i>
-          {{this.likeCount}}
-        </span>
+
+        <a href="/tweets/{{this.id}}/replies" role="button" class="btn btn-outline-primary mr-1 align-self-center">
+          <span class="">
+            <i class="far fa-comment-dots mr-2  fa-lg"></i>{{this.replyCount}}
+          </span>
+        </a>
+        {{!-- 該 tweet 已被登入者 like --}}
+        {{#if this.isLiked}}
+        <form action="/tweets/{{this.id}}/unlike" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+            <span style="font-size: 1em; ">
+              <i class="fas fa-heart mr-2 fa-lg "></i>
+              {{this.likeCount}}
+            </span>
+          </button>
+        </form>
+        {{else}}
+        {{!-- 該 tweet 未被登入者 like --}}
+        <form action="/tweets/{{this.id}}/like" method="POST" style="display: contents;">
+          <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+            <span style="font-size: 1em; ">
+              <i class="far fa-heart mr-2 fa-lg "></i>
+              {{this.likeCount}}
+            </span>
+          </button>
+        </form>
+        {{/if}}
+
       </div>
     </div>
     {{/each}}

@@ -58,8 +58,8 @@ const userController = {
     res.redirect("/signin");
   },
 
-  getUserTweets: (req, res) => {
-    return User.findByPk(req.params.id, {
+  getUserTweets: async (req, res) => {
+    const user = await User.findByPk(req.params.id, {
       include: [
         {
           model: Tweet,
@@ -81,26 +81,43 @@ const userController = {
           attributes: ["id"]
         }
       ]
-    }).then(user => {
-      const data = {
-        ...user.dataValues,
-        tweetCount: user.Tweets.length,
-        followerCount: user.Followers.length,
-        followingCount: user.Followings.length,
-        likeCount: user.Likes.length
-      };
-      data.Tweets = data.Tweets.map(tweet => ({
-        ...tweet.dataValues,
-        replyCount: tweet.Replies.length,
-        likeCount: tweet.Likes.length,
-        username: data.name
-      }));
-      const reqUserId = helpers.getUser(req).id;
-      return res.render("userTweets", { data, reqUserId });
-    });
+    })
+
+    const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
+      include: [
+        Like,
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        }
+      ]
+    })
+
+    const data = {
+      ...user.dataValues,
+      tweetCount: user.Tweets.length,
+      followerCount: user.Followers.length,
+      followingCount: user.Followings.length,
+      likeCount: user.Likes.length,
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(req.params.id))
+    }
+
+    data.Tweets = data.Tweets.map(r => ({
+      ...r.dataValues,
+      replyCount: r.Replies.length,
+      likeCount: r.Likes.length,
+      isLiked: logginedUser.Likes.map(d => d.TweetId).includes(r.id)
+    }))
+
+    const reqUserId = helpers.getUser(req).id
+
+    return res.render('userTweets', { data, reqUserId })
+
   },
-  getUserFollowings: (req, res) => {
-    User.findByPk(req.params.id, {
+
+  getUserFollowings: async (req, res) => {
+    const user = await User.findByPk(req.params.id, {
       include: [
         {
           model: Tweet,
@@ -120,34 +137,44 @@ const userController = {
           attributes: ["id"]
         }
       ]
-    }).then(user => {
-      const data = {
-        ...user.dataValues,
-        tweetCount: user.Tweets.length,
-        followerCount: user.Followers.length,
-        followingCount: user.Followings.length,
-        likeCount: user.Likes.length
-      };
+    })
 
-      //將 followings 依建立時間從最新到最舊排序
-      data.Followings = data.Followings.sort((a, b) => {
-        return b.createdAt - a.createdAt;
-      });
+    const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
+      include: [
+        Like,
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        }
+      ]
+    })
 
-      data.Followings = data.Followings.map(r => ({
-        ...r.dataValues,
-        // 該 user 是否被使用者追蹤者
-        isFollowed: helpers
-          .getUser(req)
-          .Followings.map(d => d.id)
-          .includes(r.id),
-        isUserSelf: helpers.getUser(req).id === r.id
-      }));
+    const data = {
+      ...user.dataValues,
+      tweetCount: user.Tweets.length,
+      followerCount: user.Followers.length,
+      followingCount: user.Followings.length,
+      likeCount: user.Likes.length,
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(req.params.id))
+    }
 
-      const reqUserId = helpers.getUser(req).id;
+    //將 followings 依建立時間從最新到最舊排序
+    data.Followings = data.Followings.sort((a, b) => {
+      return b.createdAt - a.createdAt
+    })
 
-      return res.render("userFollowings", { data, reqUserId });
-    });
+    data.Followings = data.Followings.map(r => ({
+      ...r.dataValues,
+      // 該 user 是否被使用者追蹤者
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(r.id),
+      isUserSelf: helpers.getUser(req).id === r.id
+    }))
+
+    const reqUserId = helpers.getUser(req).id
+
+    return res.render('userFollowings', { data, reqUserId })
+
   },
 
   getUserFollowers: async (req, res) => {
@@ -172,19 +199,26 @@ const userController = {
           attributes: ["id"]
         }
       ]
-    });
-
-    const loginUserFollowings = await Followship.findAll({
-      where: { followerId: helpers.getUser(req).id }
-    });
+    })
+    const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
+      include: [
+        Like,
+        {
+          model: User,
+          as: 'Followings',
+          attributes: ['id']
+        }
+      ]
+    })
 
     const data = {
       ...user.dataValues,
       tweetCount: user.Tweets.length,
       followerCount: user.Followers.length,
       followingCount: user.Followings.length,
-      likeCount: user.Likes.length
-    };
+      likeCount: user.Likes.length,
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(req.params.id))
+    }
 
     //將 followers 依建立時間從最新到最舊排序
     data.Followers = data.Followers.sort((a, b) => {
@@ -194,8 +228,7 @@ const userController = {
     data.Followers = data.Followers.map(r => ({
       ...r.dataValues,
       // 該 user 是否被使用者追蹤者
-      isFollowed: loginUserFollowings.map(d => d.followingId).includes(r.id),
-      // 該 user 是否為登入者自己
+      isFollowed: logginedUser.Followings.map(d => d.id).includes(r.id),
       isUserSelf: helpers.getUser(req).id === r.id
     }));
 
@@ -203,8 +236,8 @@ const userController = {
 
     return res.render("userFollowers", { data, reqUserId });
   },
-  getUserLikes: (req, res) => {
-    User.findByPk(req.params.id, {
+  getUserLikes: async (req, res) => {
+    const user = await User.findByPk(req.params.id, {
       include: [
         {
           model: Tweet,
@@ -222,7 +255,7 @@ const userController = {
         },
         {
           model: Like,
-          order: [["createdAt", "DESC"]],
+          order: [['createdAt', 'DESC']],
           include: [
             {
               model: Tweet,
@@ -241,19 +274,32 @@ const userController = {
           ]
         }
       ]
-    }).then(user => {
-      const data = {
-        ...user.dataValues,
-        tweetCount: user.Tweets.length,
-        followerCount: user.Followers.length,
-        followingCount: user.Followings.length,
-        likeCount: user.Likes.length
-      };
+    })
 
-      const reqUserId = helpers.getUser(req).id;
+    const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
+      include: [Like]
+    })
 
-      return res.render("userLikes", { data, reqUserId });
-    });
+    const data = {
+      ...user.dataValues,
+      tweetCount: user.Tweets.length,
+      followerCount: user.Followers.length,
+      followingCount: user.Followings.length,
+      likeCount: user.Likes.length
+    }
+
+    const likedTweets = data.Likes.map(r => ({
+      ...r.Tweet.dataValues,
+      replyCount: r.Tweet.Replies.length,
+      likeCount: r.Tweet.Likes.length,
+      isLiked: logginedUser.Likes.map(d => d.TweetId).includes(r.Tweet.id)
+    }))
+
+    // 登入者 id
+    const reqUserId = helpers.getUser(req).id
+
+    return res.render('userLikes', { data, reqUserId, likedTweets })
+
   },
 
   addFollowing: (req, res) => {
@@ -267,21 +313,23 @@ const userController = {
       where: {
         followerId: helpers.getUser(req).id
       }
-    }).then(followings => {
-      // 已 follow 該使用者，返回
-      const followingsId = followings.map(r => r.followingId);
-      if (followingsId.includes(parseInt(req.body.id))) {
-        return res.redirect("back");
-      } else {
-        // 未 follow 該使用者，新增 followship
-        return Followship.create({
-          followingId: parseInt(req.body.id),
-          followerId: helpers.getUser(req).id
-        }).then(followship => {
-          return res.redirect(`/users/${helpers.getUser(req).id}/followings`);
-        });
-      }
-    });
+    })
+      .then(followings => {
+        // 已 follow 該使用者，返回
+        const followingsId = followings.map(r => r.followingId)
+        if (followingsId.includes(parseInt(req.body.id))) {
+          return res.redirect('back')
+        } else {
+          // 未 follow 該使用者，新增 followship
+          return Followship.create({
+            followingId: parseInt(req.body.id),
+            followerId: helpers.getUser(req).id
+          })
+            .then((followship) => {
+              return res.redirect('back')
+            })
+        }
+      })
   },
 
   removeFollowing: (req, res) => {
@@ -301,9 +349,10 @@ const userController = {
     if (parseInt(req.params.id) !== helpers.getUser(req).id) {
       return res.redirect(`/users/${helpers.getUser(req).id}/tweets`);
     }
-    return User.findByPk(req.params.id).then(user => {
-      return res.render("getUserProfile", { user, req });
-    });
+    return User.findByPk(req.params.id)
+      .then(user => {
+        return res.render('getUserProfile', { user })
+      })
   },
 
   // 編輯使用者個人資料

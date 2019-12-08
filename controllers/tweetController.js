@@ -32,25 +32,54 @@ const tweetController = {
         distinct: true,
         order: [["updatedAt", "DESC"]]
       }).then(result => {
-        // data for pagination
-        let page = Number(req.query.page) || 1
-        let pages = Math.ceil(result.count / pageLimit)
-        let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
-        let prev = page - 1 < 1 ? 1 : page - 1
-        let next = page + 1 > pages ? pages : page + 1
 
-        res.render("tweets", {
-          tweets: result.rows,
-          top_ten_users,
-          page: page,
-          totalPage: totalPage,
-          prev: prev,
-          next: next
-        });
+        // 取得登入者的 followings，做為判斷 top_10_users 是否為登入者的 followings
+        User.findByPk(parseInt(helpers.getUser(req).id), {
+          include: [
+            Like,
+            {
+              model: User,
+              as: 'Followings',
+              attributes: ['id']
+            }
+          ]
+        })
+          .then(logginedUser => {
+            // 新增 isFollowed 屬性
+            top_ten_users = top_ten_users.map(r => ({
+              ...r.dataValues,
+              isFollowed: logginedUser.Followings.map(d => d.id).includes(parseInt(r.id))
+            }))
+
+            result.rows = result.rows.map(r => ({
+              ...r.dataValues,
+              isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
+            }))
+
+            // 登入者 id
+            const reqUserId = helpers.getUser(req).id
+
+            // data for pagination
+            let page = Number(req.query.page) || 1
+            let pages = Math.ceil(result.count / pageLimit)
+            let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
+            let prev = page - 1 < 1 ? 1 : page - 1
+            let next = page + 1 > pages ? pages : page + 1
+
+            res.render("tweets", {
+              tweets: result.rows,
+              top_ten_users,
+              reqUserId,
+              page: page,
+              totalPage: totalPage,
+              prev: prev,
+              next: next
+            });
+
+          });
       });
-    });
+    })
   },
-
 
   postTweets: (req, res) => {
     if (!req.body.description) {
@@ -70,7 +99,49 @@ const tweetController = {
         res.redirect("/tweets");
       });
     }
-  }
+  },
+  // 對推播 like
+  addLike: (req, res) => {
+
+    // 判斷是否已 follow 該使用者
+    Like.findAll({
+      where: {
+        UserId: helpers.getUser(req).id
+      }
+    })
+      .then(likedTweets => {
+
+        const likedTweetsId = likedTweets.map(r => r.TweetId)
+        // 已 follow 該使用者，返回
+        if (likedTweetsId.includes(parseInt(req.params.id))) {
+          return res.redirect('back')
+        } else {
+          // 若未曾 like 該 tweet，則新增一筆
+          return Like.create({
+            UserId: helpers.getUser(req).id,
+            TweetId: parseInt(req.params.id)
+          })
+            .then((like) => {
+              return res.redirect('back')
+            })
+        }
+      })
+  },
+  // 對推播 unlike
+  removeLike: (req, res) => {
+    return Like.findOne({
+      where: {
+        UserId: helpers.getUser(req).id,
+        TweetId: req.params.id
+      }
+    })
+      .then((like) => {
+        like.destroy()
+          .then((like) => {
+            return res.redirect('back')
+          })
+      })
+  },
 };
 
 module.exports = tweetController;
