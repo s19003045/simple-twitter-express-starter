@@ -242,12 +242,6 @@ const userController = {
         {
           model: Tweet,
           attributes: ["id"],
-          include: [
-            {
-              model: User,
-              attributes: ["id", "name", "avatar"]
-            }
-          ]
         },
         {
           model: User,
@@ -266,7 +260,10 @@ const userController = {
             {
               model: Tweet,
               include: [
-                { model: User },
+                {
+                  model: User,
+                  attributes: ["id", "name", "avatar"]
+                },
                 {
                   model: Like,
                   attributes: ["id"]
@@ -283,9 +280,10 @@ const userController = {
     })
 
     const logginedUser = await User.findByPk(parseInt(helpers.getUser(req).id), {
-      include: [Like]
+      include: [{
+        model: Like, attributes: ["TweetId"]
+      }]
     })
-
     const data = {
       ...user.dataValues,
       tweetCount: user.Tweets.length,
@@ -293,19 +291,16 @@ const userController = {
       followingCount: user.Followings.length,
       likeCount: user.Likes.length
     }
-
     const likedTweets = data.Likes.map(r => ({
       ...r.Tweet.dataValues,
       replyCount: r.Tweet.Replies.length,
       likeCount: r.Tweet.Likes.length,
       isLiked: logginedUser.Likes.map(d => d.TweetId).includes(r.Tweet.id)
     }))
-
     // 登入者 id
     const reqUserId = helpers.getUser(req).id
 
     return res.render('userLikes', { data, reqUserId, likedTweets })
-
   },
 
   addFollowing: (req, res) => {
