@@ -13,7 +13,7 @@
       <th scope="col">Tweets</th>
       <th scope="col">Following</th>
       <th scope="col">Follower</th>
-      <th scope="col">Like</th>
+      <th scope="col">Get likes</th>
     </tr>
   </thead>
   <tbody>
@@ -24,8 +24,31 @@
       <td>{{this.Tweets.length}}</td>
       <td>{{this.Followings.length}}</td>
       <td>{{this.Followers.length}}</td>
-      <td></td>
+      <td>{{this.LikeCount}}</td>
     </tr>
     {{/each}}
   </tbody>
 </table>
+
+<div class="my-4">
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <li class="page-item">
+        <a class="page-link" href="/admin/users?page={{prev}}" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      {{#each totalPage}}
+      {{#ifCond this ../page}}
+      <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+      {{else}}
+      <li class="page-item"><a class="page-link" href="/admin/users?page={{this}}">{{this}}</a></li>
+      {{/ifCond}}
+      {{/each}}
+      <a class="page-link" href="/admin/users?page={{next}}" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+      </li>
+    </ul>
+  </nav>
+</div>

@@ -5,7 +5,7 @@
         <div class="col-md-12">
           <form action="/tweets" method="POST">
             <div class="form-group">
-              <textarea class="form-control" id="tweettext" name="tweettext" rows="3"
+              <textarea class="form-control" id="description" name="description" rows="3"
                 placeholder="What's on your mind?"></textarea>
             </div>
             <div class="d-flex justify-content-end">
@@ -20,17 +20,35 @@
               <img class="img-fluid" src="{{this.User.avatar}}" alt="HEAD PIC">
             </div>
             <div class="col-md-10">
-              <h5>{{this.user.name}}</h5>
+              <h5><a href="/users/{{this.User.id}}/tweets">{{this.User.name}} </a>, {{moment this.createdAt}}</h5>
               <p>{{this.description}}
               </p>
-              <form action="/tweets/{{tweet.id}}/replies" method="POST" style="display: contents;">
-                <button type="submit" class="btn btn-outline-primary mr-1 align-self-center">Reply(
-                  {{this.Replies.length}})</button>
+              <a href="/tweets/{{this.id}}/replies" role="button"
+                class="btn btn-outline-primary mr-1 align-self-center">Reply(
+                {{this.Replies.length}})</a>
+              {{!-- 該 tweet 已被登入者 like --}}
+              {{#if this.isLiked}}
+              <form action="/tweets/{{this.id}}/unlike" method="POST" style="display: contents;">
+                <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+
+                  <span style="font-size: 1em; ">
+                    <i class="fas fa-heart mr-2 fa-lg "></i>
+                    {{this.Likes.length}}
+                  </span>
+                </button>
               </form>
-              <form action="/tweets/{{tweet.id}}/likes" method="POST" style="display: contents;">
-                <button type="submit"
-                  class="btn btn-outline-danger mr-1 align-self-center">Like({{this.Likes.length}})</button>
+              {{else}}
+              {{!-- 該 tweet 未被登入者 like --}}
+              <form action="/tweets/{{this.id}}/like" method="POST" style="display: contents;">
+                <button type="submit" class="btn btn-outline-danger mr-1 align-self-center">
+                  <span style="font-size: 1em; ">
+                    <i class="far fa-heart mr-2 fa-lg "></i>
+                    {{this.Likes.length}}
+                  </span>
+                </button>
               </form>
+              {{/if}}
+
             </div>
           </div>
           {{/each}}
@@ -46,16 +64,30 @@
           {{#each top_ten_users}}
           <div class="row mt-3 border p-3">
             <div class="col-md-4">
-              <img class="img-fluid" src="{{this.avatar}}" alt="HEAD PIC">
+              <a href="/users/{{this.id}}/tweets">
+                <img class="img-fluid" src="{{this.avatar}}" alt="HEAD PIC">
+              </a>
             </div>
             <div class="col-md-8">
-              <h4>{{this.name}}</h4>
+              <h5><a href="/users/{{this.id}}/tweets">{{this.name}}</a></h5>
               <p>{{this.introduction}}</p>
-              <form action="/followships" method="POST" style="display: contents;">
-                <div class="d-flex justify-content-end">
-                  <button type="submit" class="btn btn-outline-primary mr-1 align-self-center">Follow</button>
-                </div>
-              </form>
+              <div class="d-flex justify-content-end">
+                {{#ifCond ...reqUserId this.id}}
+                {{!-- 若是登入者自己，不用呈現 follow button --}}
+                {{else}}
+                {{#if this.isFollowed}}
+                <form action="/followships/{{this.id}}?_method=DELETE" method="POST"><button type="submit"
+                    class="btn btn-danger mb-2 mr-2">Following</button>
+                </form>
+                {{else}}
+                <form action="/followships" method="POST">
+                  <input type="number" name="id" value="{{this.id}}" class="d-none">
+                  <button type="submit" class="btn btn-primary mb-2 mr-2">Follow</button>
+                </form>
+                {{/if}}
+                {{/ifCond}}
+              </div>
+
             </div>
           </div>
           {{/each}}
@@ -63,4 +95,28 @@
       </div>
     </div>
   </div>
+
+  <div class="my-4">
+    <nav aria-label="Page navigation example">
+      <ul class="pagination justify-content-center">
+        <li class="page-item">
+          <a class="page-link" href="/tweets?page={{prev}}" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        {{#each totalPage}}
+        {{#ifCond this ../page}}
+        <li class="page-item active"><a class="page-link" href="#">{{this}}</a></li>
+        {{else}}
+        <li class="page-item"><a class="page-link" href="/tweets?page={{this}}">{{this}}</a></li>
+        {{/ifCond}}
+        {{/each}}
+        <a class="page-link" href="/tweets?page={{next}}" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
 </div>

@@ -1,0 +1,81 @@
+<div class="row mt-4">
+  <div class="col-6">
+    <div id="content-formatting" class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title">{{data.name}}</h3>
+      </div>
+      <div class="card-body">
+        <img src="{{data.avatar}}" width="200" id="personal-info-avatar" alt="">
+        <h3 class="card-title mt-2">{{data.name}}</h3>
+        <p class="card-text">
+          <i class="fas fa-link mr-2"></i>
+          <a href="mailto:{{data.email}}">{{data.email}}</a>
+        </p>
+        <p class="card-text">{{data.introduction}}</p>
+        {{#ifCond reqUserId data.id}}
+        <a href="/users/{{reqUserId}}/edit" class="mt-3 btn btn-info">Edit</a>
+        {{else}}
+        {{#if data.isFollowed}}
+        <form action="/followships/{{data.id}}?_method=DELETE" method="POST"><button type="submit"
+            class="btn btn-danger mb-2 mr-2">Following</button></form>
+        {{else}}
+        <form action="/followships" method="POST">
+          <input type="number" name="id" value="{{data.id}}" class="d-none">
+          <button type="submit" class="btn btn-primary mb-2 mr-2">Follow</button>
+        </form>
+        {{/if}}
+        {{/ifCond}}
+        <hr>
+        <a href="/users/{{data.id}}/tweets" class="mr-4">
+          <span class="text-dark">{{data.tweetCount}}</span>
+          <span class="ml-1 text-muted">Tweets</span>
+        </a>
+        <a href="/users/{{data.id}}/followings" class="mr-4">
+          <span class="text-dark">{{data.followingCount}}</span>
+          <span class="ml-1 text-muted">Followings</span>
+        </a>
+        <a href="/users/{{data.id}}/followers" class="mr-4">
+          <span class="text-dark">{{data.followerCount}}</span>
+          <span class="ml-1 text-muted">Followers</span>
+        </a>
+        <a href="/users/{{data.id}}/likes" class="mr-4">
+          <span class="text-dark">{{data.likeCount}}</span>
+          <span class="ml-1 text-muted">Likes</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-6">
+    <h3 class="mb-3">Following</h3>
+    {{#each data.Followings}}
+    <div id="content-formatting" class="card my-4">
+      <div class="card-body">
+        <a href="/users/{{this.id}}/tweets">
+          <img src="{{this.avatar}}" id="personal-tweets-avatar" alt="">
+        </a>
+        <span class="text-dark ml-2 user-tweet-name">
+          <a href="/users/{{this.id}}/tweets">
+            {{this.name}}
+          </a>
+        </span>
+        <small class="ml-2">{{moment this.createdAt}}</small>
+        <h6 class="my-4">{{this.introduction}}</h6>
+        <div class="d-flex mt-2">
+          {{#if this.isFollowed}}
+          <form action="/followships/{{this.id}}?_method=DELETE" method="POST"><button type="submit"
+              class="btn btn-danger mb-2 mr-2">Following</button></form>
+          {{else}}
+          {{#if this.isUserSelf}}
+          {{!-- 若是 user 自己，不用呈現 follow button --}}
+          {{else}}
+          <form action="/followships" method="POST">
+            <input type="number" name="id" value="{{this.id}}" class="d-none">
+            <button type="submit" class="btn btn-primary mb-2 mr-2">Follow</button>
+          </form>
+          {{/if}}
+          {{/if}}
+        </div>
+      </div>
+    </div>
+    {{/each}}
+  </div>

@@ -1,5 +1,12 @@
 const express = require("express");
 const app = express();
+
+// 判別開發環境
+if (process.env.NODE_ENV !== "production") {
+  // 如果不是 production 模式，使用 dotenv 讀取 .env 檔案
+  require("dotenv").config();
+}
+
 const db = require("./models");
 const helpers = require("./_helpers");
 const exphbs = require("express-handlebars");
@@ -13,10 +20,13 @@ const methodOverride = require("method-override");
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.engine("handlebars", exphbs({
-  defaultLayout: "main",
-  helpers: require('./config/handlebars-helpers')
-}));
+app.engine(
+  "handlebars",
+  exphbs({
+    defaultLayout: "main",
+    helpers: require("./config/handlebars-helpers")
+  })
+);
 app.set("view engine", "handlebars");
 
 app.use(
@@ -47,3 +57,5 @@ app.use((req, res, next) => {
 app.listen(port, () => console.log(`Express app listening on port ${port}!`));
 
 require("./routes")(app, passport);
+
+module.exports = app;
