@@ -50,10 +50,10 @@
     <div id="content-formatting" class="card mb-4">
       <div class="card-body">
         <a href="/users/{{this.UserId}}/tweets">
-          <img src="{{...data.avatar}}" id="personal-tweets-avatar" alt="">
+          <img src="{{../data.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
-        <small class="ml-2"><a href="/users/{{this.UserId}}/tweets">{{this.username}}</a>,
-          {{moment this.createdAt}}</small>
+        <span class="ml-2"><a href="/users/{{this.UserId}}/tweets">{{../data.name}}</a>,
+          {{moment this.createdAt}}</span>
         <h6 class="mt-2">{{this.description}}</h6>
         <hr>
 

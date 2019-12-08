@@ -14,6 +14,16 @@
         <p class="card-text">{{data.introduction}}</p>
         {{#ifCond reqUserId data.id}}
         <a href="/users/{{reqUserId}}/edit" class="mt-3 btn btn-info">Edit</a>
+        {{else}}
+        {{#if data.isFollowed}}
+        <form action="/followships/{{data.id}}?_method=DELETE" method="POST"><button type="submit"
+            class="btn btn-danger mb-2 mr-2">Following</button></form>
+        {{else}}
+        <form action="/followships" method="POST">
+          <input type="number" name="id" value="{{data.id}}" class="d-none">
+          <button type="submit" class="btn btn-primary mb-2 mr-2">Follow</button>
+        </form>
+        {{/if}}
         {{/ifCond}}
         <hr>
         <a href="/users/{{data.id}}/tweets" class="mr-4">
@@ -43,9 +53,9 @@
         <a href="#">
           <img src="{{this.User.avatar}}" id="personal-tweets-avatar" alt="">
         </a>
-        <small class="ml-2"><a href="/users/{{this.Tweet.User.id}}/tweets">{{this.Tweet.User.name}}</a>,
-          {{moment this.Tweet.createdAt}}</small>
-        <h6 class="mt-2">{{this.Tweet.description}}</h6>
+        <span class="ml-2"><a href="/users/{{this.User.id}}/tweets">{{this.User.name}}</a>,
+          {{moment this.Tweet.createdAt}}</span>
+        <h6 class="mt-2">{{this.description}}</h6>
         <hr>
 
         <a href="/tweets/{{this.id}}/replies" role="button" class="btn btn-outline-primary mr-1 align-self-center">
